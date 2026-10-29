@@ -9,6 +9,7 @@
     stepsDef: [], state: null,
     events: new Map(), nodes: new Map(), toolNodes: new Map(),
     lastSeq: -1, busy: false, selected: null, es: null, tick: null, chipMinutes: {},
+    chat: null, confirmDelete: null,
   };
 
   // ---------------------------------------------------------------------------------------------
@@ -86,6 +87,8 @@
     try {
       S.state = await api('/api/state');
       if (!S.selected || !S.stepsDef.find((s) => s.id === S.selected)) S.selected = S.state.current;
+      if (S.chat && S.state.chat.id && S.state.chat.id !== S.chat) { S.chat = S.state.chat.id; loadChat(); }
+      S.chat = S.state.chat.id;
       renderHeader(); renderRail(); renderChips(); renderCards();
     } catch (e) { /* the server is away; the next poll will say */ }
     finally { stateInFlight = false; }
@@ -124,7 +127,7 @@
   function stepDef(id) { return S.stepsDef.find((s) => s.id === id) || {}; }
   function renderRail() {
     const rail = $('rail'), st = S.state;
-    let h = '<div class="eyebrow">Seven steps</div>';
+    let h = '<div class="steps"><div class="eyebrow">Seven steps</div>';
     for (const s of st.steps) {
       const cls = ['step', 'st-' + s.status, s.id === st.current ? 'current' : '', s.id === S.selected ? 'selected' : ''].join(' ');
       let sub = '';
@@ -137,11 +140,79 @@
         h += `<button class="mark" data-mark="${s.id}" data-done="${s.status === 'done' ? 0 : 1}">${s.status === 'done' ? 'undo' : 'mark done'}</button>`;
       }
     }
+    h += '</div>' + chatsHtml();
     rail.innerHTML = h;
     rail.querySelectorAll('.step').forEach((el) => el.addEventListener('click', () => { S.selected = el.dataset.step; renderRail(); renderChips(); renderCards(); }));
     rail.querySelectorAll('.mark').forEach((b) => b.addEventListener('click', async (e) => {
       e.stopPropagation(); await post('/api/mark', { step: b.dataset.mark, done: b.dataset.done === '1' }); refreshState();
     }));
+    bindChats(rail);
+  }
+
+  // ---------------------------------------------------------------------------------------------
+  // chats: one Claude Code session each, listed newest first, like any chat app
+  // ---------------------------------------------------------------------------------------------
+  function when(ms) {
+    if (!ms) return '';
+    const d = new Date(ms), now = new Date();
+    const day = (x) => new Date(x.getFullYear(), x.getMonth(), x.getDate()).getTime();
+    const diff = Math.round((day(now) - day(d)) / 86400000);
+    if (diff === 0) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (diff === 1) return 'yesterday';
+    return d.toLocaleDateString([], { day: 'numeric', month: 'short' });
+  }
+  function chatsHtml() {
+    const chats = (S.state && S.state.chats) || [];
+    const busyTip = S.busy ? 'Stop Claude first' : '';
+    let h = `<div class="chats"><div class="chats-head"><span class="eyebrow">Chats</span>
+      <button class="newchat" data-newchat ${S.busy ? 'disabled' : ''} title="${esc(busyTip || 'A fresh chat; the files and steps stay')}">+ new</button></div><div class="chatlist">`;
+    for (const c of chats) {
+      const cur = c.id === S.chat;
+      if (S.confirmDelete === c.id) {
+        h += `<div class="chatrow confirm"><span>Delete this chat?</span><button class="yes" data-delyes="${c.id}">Delete</button><button data-delno>Keep</button></div>`;
+        continue;
+      }
+      h += `<div class="chatrow ${cur ? 'current' : ''}" data-chat="${c.id}" title="${esc(c.title || 'New chat')}">
+        <div class="ctitle">${esc(c.title || 'New chat')}</div>
+        <div class="cwhen">${esc(when(c.updated))}</div>
+        <button class="cdel" data-del="${c.id}" title="Delete this chat" aria-label="Delete this chat">×</button></div>`;
+    }
+    if (!chats.length) h += '<div class="chatrow empty">No chats yet</div>';
+    return h + '</div></div>';
+  }
+  function bindChats(rail) {
+    const hint = (msg) => { const i = $('input'); const old = i.placeholder; i.placeholder = msg; setTimeout(() => { i.placeholder = old; }, 2500); };
+    rail.querySelectorAll('[data-newchat]').forEach((b) => b.addEventListener('click', async () => {
+      if (S.busy) return hint('Stop Claude first');
+      try { const r = await post('/api/chats/new'); if (r.id !== S.chat) { S.chat = r.id; loadChat(); } else $('input').focus(); }
+      catch (e) { hint(e.message); }
+    }));
+    rail.querySelectorAll('.chatrow[data-chat]').forEach((el) => el.addEventListener('click', async () => {
+      const id = el.dataset.chat;
+      if (id === S.chat) return;
+      if (S.busy) return hint('Stop Claude first');
+      try { await post('/api/chats/open', { id }); S.chat = id; loadChat(); }
+      catch (e) { hint(e.message); }
+    }));
+    rail.querySelectorAll('[data-del]').forEach((b) => b.addEventListener('click', (e) => {
+      e.stopPropagation(); S.confirmDelete = b.dataset.del; renderRail();
+    }));
+    rail.querySelectorAll('[data-delno]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); S.confirmDelete = null; renderRail(); }));
+    rail.querySelectorAll('[data-delyes]').forEach((b) => b.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = b.dataset.delyes; S.confirmDelete = null;
+      try {
+        const r = await api(`/api/chats?id=${encodeURIComponent(id)}`, { method: 'DELETE' });
+        if (r.current !== S.chat) { S.chat = r.current; loadChat(); } else refreshState();
+      } catch (err) { hint(err.message); renderRail(); }
+    }));
+  }
+  function loadChat() {
+    if (S.es) { S.es.close(); S.es = null; }
+    S.events.clear(); S.nodes.clear(); S.toolNodes.clear(); S.lastSeq = -1;
+    $('transcript').innerHTML = '';
+    connect();
+    stateSoon(100);
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -183,6 +254,7 @@
     $('send').disabled = b;
     $('working').hidden = !b;
     document.querySelectorAll('.chip[data-chip]').forEach((c) => { c.disabled = b; });
+    document.querySelectorAll('[data-newchat]').forEach((c) => { c.disabled = b; });
     if (b) { S.tick = setInterval(renderWorking, 1000); renderWorking(); }
     else { clearInterval(S.tick); S.tick = null; stateSoon(400); }
     scheduleState();
@@ -225,6 +297,7 @@
   function scrollBottom() { const t = $('transcript'); t.scrollTop = t.scrollHeight; }
 
   function onEvent(ev) {
+    if (ev.kind === 'chat') { if (ev.chat && ev.chat !== S.chat) { S.chat = ev.chat; loadChat(); } return; }
     const existed = S.events.has(ev.seq);
     S.events.set(ev.seq, ev);
     S.lastSeq = Math.max(S.lastSeq, ev.seq);
@@ -317,7 +390,10 @@
     const es = new EventSource(`/api/events?since=${S.lastSeq}`);
     S.es = es;
     es.onmessage = (m) => { try { onEvent(JSON.parse(m.data)); } catch (e) { /* ignore */ } };
-    es.addEventListener('hello', (m) => { try { setBusy(!!JSON.parse(m.data).busy); } catch (e) { /* ignore */ } welcome(); });
+    es.addEventListener('hello', (m) => {
+      try { const h = JSON.parse(m.data); setBusy(!!h.busy); if (h.chat && S.chat && h.chat !== S.chat) { S.chat = h.chat; loadChat(); return; } } catch (e) { /* ignore */ }
+      welcome();
+    });
     es.onerror = () => { es.close(); setTimeout(connect, 2000); };
   }
 

@@ -27,7 +27,7 @@ from pathlib import Path
 
 STUDIO = Path(__file__).resolve().parent
 PROJECT = STUDIO.parent  # overridden by --project
-STATE_DIR_NAME = '.studio'  # per-project: session id, chat history, manual step marks (git-ignored)
+STATE_DIR_NAME = '.studio'  # per-project: chats/<id>/ (session id + history), manual step marks (git-ignored)
 
 # Tools the headless agent may use without asking. dontAsk denies everything else, so this list is the
 # whole permission surface. Bash is unscoped because the pipeline shells out to python, ffmpeg and node.
@@ -370,7 +370,9 @@ def full_state():
         'tools': TOOLS.get(), 'env': env_status(), 'balance': BALANCE.get(),
         'mcp': SESSION.mcp_servers, 'concept': concept, 'references': refs, 'packaging': pack,
         'reels': reels, 'runs': runs, 'steps': steps, 'current': current,
-        'chat': {'busy': SESSION.running, 'seq': SESSION.seq, 'sessionId': SESSION.session_id},
+        'chat': {'busy': SESSION.running, 'seq': SESSION.seq, 'sessionId': SESSION.session_id,
+                 'id': SESSION.chat_id, 'title': SESSION.title},
+        'chats': SESSION.list_chats(),
     }
 
 
@@ -415,14 +417,106 @@ class Session:
         self.blocks = {}
         self.message_ordinal = 0
         self.turn_started = None
+        self.chat_id = None
+        self.title = ''
+        self.created = 0
+        self.messages = 0
         self.load()
 
-    # -- persistence -------------------------------------------------------------------------------
+    # -- persistence: one folder per chat, .studio/chats/<id>/{session.json,history.jsonl} ---------
+    @staticmethod
+    def chats_root() -> Path:
+        d = state_dir() / 'chats'
+        d.mkdir(exist_ok=True)
+        return d
+
+    def chat_dir(self) -> Path:
+        d = self.chats_root() / self.chat_id
+        d.mkdir(exist_ok=True)
+        return d
+
+    def hist_path(self) -> Path:
+        return self.chat_dir() / 'history.jsonl'
+
+    @staticmethod
+    def new_id() -> str:
+        return time.strftime('%Y%m%d-%H%M%S') + '-' + os.urandom(2).hex()
+
+    @staticmethod
+    def valid_id(cid) -> bool:
+        return isinstance(cid, str) and re.fullmatch(r'[\w-]{1,64}', cid) is not None
+
     def load(self):
-        meta = read_json(state_dir() / 'session.json', {})
+        """Open the chat the studio was last on. Older studios kept one chat at the root of .studio/;
+        that one becomes the first entry of the list."""
+        legacy = [state_dir() / n for n in ('session.json', 'history.jsonl') if (state_dir() / n).exists()]
+        if legacy:
+            cid = self.new_id()
+            d = self.chats_root() / cid
+            d.mkdir(exist_ok=True)
+            for p in legacy:
+                p.rename(d / p.name)
+            meta = read_json(d / 'session.json', {})
+            meta.setdefault('title', '')
+            meta.setdefault('created', int(d.stat().st_mtime * 1000))
+            meta.setdefault('messages', 0)
+            for line in (d / 'history.jsonl').read_text(errors='replace').splitlines() if (d / 'history.jsonl').exists() else []:
+                try:
+                    ev = json.loads(line)
+                except Exception:  # noqa: BLE001
+                    continue
+                if ev.get('kind') == 'asked':
+                    meta['messages'] += 1
+                    meta['created'] = min(meta['created'], ev.get('at') or meta['created'])
+                    if not meta['title']:
+                        meta['title'] = self.make_title(ev.get('body') or '')
+            write_json(d / 'session.json', meta)
+            self.set_current(cid)
+        cid = read_json(state_dir() / 'state.json', {}).get('chat')
+        if not self.valid_id(cid) or not (self.chats_root() / cid / 'session.json').exists():
+            chats = self.list_chats()
+            cid = chats[0]['id'] if chats else None
+        if cid:
+            self.open_chat(cid)
+        else:
+            self.new_chat()
+
+    @staticmethod
+    def make_title(text: str) -> str:
+        t = ' '.join(str(text).split())
+        return t if len(t) <= 60 else t[:57].rstrip() + '…'
+
+    def set_current(self, cid):
+        st = read_json(state_dir() / 'state.json', {})
+        st['chat'] = cid
+        write_json(state_dir() / 'state.json', st)
+
+    def list_chats(self):
+        out = []
+        for d in self.chats_root().iterdir():
+            meta = read_json(d / 'session.json', None) if d.is_dir() else None
+            if not isinstance(meta, dict):
+                continue
+            hist = d / 'history.jsonl'
+            created = int(meta.get('created') or 0)
+            out.append({'id': d.name, 'title': meta.get('title') or '', 'created': created,
+                        'updated': int(hist.stat().st_mtime * 1000) if hist.exists() else created,
+                        'messages': int(meta.get('messages') or 0)})
+        out.sort(key=lambda c: c['updated'], reverse=True)
+        return out
+
+    def open_chat(self, cid) -> bool:
+        if self.running or not self.valid_id(cid):
+            return False
+        self.chat_id = cid
+        meta = read_json(self.chat_dir() / 'session.json', {})
         self.session_id = meta.get('session_id')
         self.mcp_servers = meta.get('mcp_servers', [])
-        hist = state_dir() / 'history.jsonl'
+        self.title = meta.get('title') or ''
+        self.created = int(meta.get('created') or time.time() * 1000)
+        self.messages = int(meta.get('messages') or 0)
+        self.events, self.seq, self.blocks = [], 0, {}
+        hist = self.hist_path()
         if hist.exists():
             for line in hist.read_text(errors='replace').splitlines():
                 try:
@@ -435,18 +529,45 @@ class Session:
         # A turn that was running when the server died is over now.
         if self.events and self.events[-1]['kind'] not in ('done', 'error', 'asked'):
             self.emit('done', 'stopped', 'The studio was restarted while this was running.')
+        self.set_current(cid)
+        self.save_meta()
+        # Tell every open page which chat is on screen now (not recorded).
+        self.broadcast({'seq': -1, 'at': int(time.time() * 1000), 'kind': 'chat', 'label': 'opened', 'body': None, 'chat': cid})
+        return True
+
+    def new_chat(self):
+        """Start an empty chat (a fresh Claude Code session). An empty current chat is simply reused."""
+        if self.running:
+            return None
+        if self.chat_id and self.messages == 0 and (self.chats_root() / self.chat_id / 'session.json').exists():
+            return self.chat_id
+        cid = self.new_id()
+        (self.chats_root() / cid).mkdir(exist_ok=True)
+        write_json(self.chats_root() / cid / 'session.json',
+                   {'session_id': None, 'mcp_servers': self.mcp_servers, 'title': '', 'created': int(time.time() * 1000), 'messages': 0})
+        self.open_chat(cid)
+        return cid
+
+    def delete_chat(self, cid) -> bool:
+        if not self.valid_id(cid) or (cid == self.chat_id and self.running):
+            return False
+        shutil.rmtree(self.chats_root() / cid, ignore_errors=True)
+        if cid == self.chat_id:
+            chats = self.list_chats()
+            self.chat_id = None
+            if chats:
+                self.open_chat(chats[0]['id'])
+            else:
+                self.new_chat()
+        return True
 
     def save_meta(self):
-        write_json(state_dir() / 'session.json', {'session_id': self.session_id, 'mcp_servers': self.mcp_servers})
+        write_json(self.chat_dir() / 'session.json',
+                   {'session_id': self.session_id, 'mcp_servers': self.mcp_servers, 'title': self.title,
+                    'created': self.created, 'messages': self.messages})
 
     def reset(self):
-        self.stop()
-        self.events, self.seq, self.session_id, self.blocks = [], 0, None, {}
-        for name in ('session.json', 'history.jsonl'):
-            try:
-                (state_dir() / name).unlink()
-            except FileNotFoundError:
-                pass
+        return self.new_chat()
 
     # -- events ------------------------------------------------------------------------------------
     @property
@@ -476,7 +597,7 @@ class Session:
     def broadcast(self, ev, record=False):
         if record:
             try:
-                with open(state_dir() / 'history.jsonl', 'a') as f:
+                with open(self.hist_path(), 'a') as f:
                     f.write(json.dumps(ev, ensure_ascii=False) + '\n')
             except OSError:
                 pass
@@ -492,7 +613,7 @@ class Session:
     def record(self, ev):
         """Write the final form of a grown event to history."""
         try:
-            with open(state_dir() / 'history.jsonl', 'a') as f:
+            with open(self.hist_path(), 'a') as f:
                 f.write(json.dumps(ev, ensure_ascii=False) + '\n')
         except OSError:
             pass
@@ -504,6 +625,10 @@ class Session:
         self.blocks = {}
         self.turn_started = time.time()
         self.emit('asked', step, shown or prompt)
+        self.messages += 1
+        if not self.title:
+            self.title = self.make_title(shown or prompt)
+        self.save_meta()
         system = (STUDIO / 'system-prompt.md').read_text(errors='replace') if (STUDIO / 'system-prompt.md').exists() else ''
         system = system.replace('{{STUDIO_DIR}}', str(STUDIO)) + '\n\n## Where things stand right now\n' + state_summary_for_agent()
         args = ['claude', '-p', prompt, '--output-format', 'stream-json', '--verbose', '--include-partial-messages',
@@ -838,7 +963,9 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/history':
             since = int(q.get('since', ['-1'])[0])
             return self.send_json({'events': [e for e in SESSION.events if e['seq'] > since], 'busy': SESSION.running,
-                                   'sessionId': SESSION.session_id})
+                                   'sessionId': SESSION.session_id, 'chat': SESSION.chat_id})
+        if path == '/api/chats':
+            return self.send_json({'chats': SESSION.list_chats(), 'current': SESSION.chat_id})
         if path == '/api/file':
             p = self.safe_project_path(q.get('path', [''])[0])
             if p is None or not p.is_file() or p.suffix not in ('.md', '.txt', '.json', '.js'):
@@ -865,9 +992,20 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/stop':
             SESSION.stop()
             return self.send_json({'ok': True})
-        if path == '/api/reset':
-            SESSION.reset()
-            return self.send_json({'ok': True})
+        if path in ('/api/reset', '/api/chats/new'):
+            if SESSION.running:
+                return self.send_json({'error': 'Claude is still working. Stop it first.'}, 409)
+            return self.send_json({'ok': True, 'id': SESSION.new_chat()})
+        if path == '/api/chats/open':
+            cid = self.read_json_body().get('id')
+            if not SESSION.valid_id(cid) or not (SESSION.chats_root() / cid / 'session.json').exists():
+                return self.send_json({'error': 'no such chat'}, 404)
+            if cid == SESSION.chat_id:
+                return self.send_json({'ok': True, 'id': cid})
+            if SESSION.running:
+                return self.send_json({'error': 'Claude is still working. Stop it first.'}, 409)
+            SESSION.open_chat(cid)
+            return self.send_json({'ok': True, 'id': cid})
         if path == '/api/mark':
             body = self.read_json_body()
             st = read_json(state_dir() / 'state.json', {})
@@ -924,6 +1062,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self.send_json({'error': 'not found'}, 404)
             p.unlink()
             return self.send_json({'ok': True})
+        if u.path == '/api/chats':
+            cid = q.get('id', [''])[0]
+            if not SESSION.valid_id(cid) or not (SESSION.chats_root() / cid).is_dir():
+                return self.send_json({'error': 'no such chat'}, 404)
+            if cid == SESSION.chat_id and SESSION.running:
+                return self.send_json({'error': 'Claude is still working in this chat. Stop it first.'}, 409)
+            SESSION.delete_chat(cid)
+            return self.send_json({'ok': True, 'current': SESSION.chat_id})
         self.send_json({'error': 'not found'}, 404)
 
     def sse(self, since):
@@ -936,7 +1082,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             for ev in [e for e in SESSION.events if e['seq'] > since]:
                 self.wfile.write(f'data: {json.dumps(ev, ensure_ascii=False)}\n\n'.encode())
-            self.wfile.write(f'event: hello\ndata: {json.dumps({"busy": SESSION.running})}\n\n'.encode())
+            self.wfile.write(f'event: hello\ndata: {json.dumps({"busy": SESSION.running, "chat": SESSION.chat_id})}\n\n'.encode())
             self.wfile.flush()
             while True:
                 try:
@@ -965,7 +1111,7 @@ def main():
     gi = PROJECT / '.gitignore'
     if gi.exists() and STATE_DIR_NAME + '/' not in gi.read_text():
         with open(gi, 'a') as f:
-            f.write(f'\n# studio: session id, chat history, step marks\n{STATE_DIR_NAME}/\n')
+            f.write(f'\n# studio: chats (session ids, history), step marks\n{STATE_DIR_NAME}/\n')
     url = f'http://localhost:{a.port}'
     try:
         httpd = ThreadingHTTPServer(('127.0.0.1', a.port), Handler)
