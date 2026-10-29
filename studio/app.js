@@ -114,8 +114,6 @@
     const kb = $('keysBtn');
     kb.className = 'pill ' + (st.env.APIFY_API_KEY && !mcpBad ? 'ok' : 'warn');
     kb.textContent = 'Keys';
-    const prev = $('openPreview');
-    if (st.packaging.previewUrl) { prev.href = st.packaging.previewUrl; prev.hidden = false; } else prev.hidden = true;
   }
   $('balancePill').onclick = async () => { $('balancePill').textContent = '…'; await api('/api/balance?refresh=1'); refreshState(); };
   $('keysBtn').onclick = () => openKeys();
@@ -300,9 +298,13 @@
 
   function welcome() {
     if (S.events.size || document.getElementById('welcome')) return;
-    const el = document.createElement('div'); el.id = 'welcome'; el.className = 'msg assistant';
+    const el = document.createElement('div'); el.id = 'welcome'; el.className = 'hello';
     const cur = S.state ? S.state.steps.find((s) => s.id === S.state.current) : null;
-    el.innerHTML = `<div class="bubble">${md(`**Hi.** Steps on the left, your page on the right, Claude Code in here. Press a button below, or just say what you want.` + (cur ? `\n\nYou are on step ${cur.n}, **${cur.title.toLowerCase()}**.` : ''))}</div>`;
+    const def = cur ? stepDef(cur.id) : {};
+    el.innerHTML = `<div class="hello-eyebrow eyebrow">${cur ? `Step ${cur.n} of 7` : 'Viral Page Studio'}</div>
+      <h1 class="hello-title">${esc(cur ? cur.title : 'Hi')}</h1>
+      <p class="hello-sub">${esc(def.what || 'Steps on the left, your page on the right, Claude Code in here.')}</p>
+      <p class="hello-hint">Press a button below, or just say what you want.</p>`;
     $('transcript').appendChild(el);
   }
   function welcomeOff() { const w = document.getElementById('welcome'); if (w) w.remove(); }
@@ -338,11 +340,11 @@
     const steps = Object.fromEntries(st.steps.map((s) => [s.id, s]));
     const cur = (id) => 'card' + (st.current === id ? ' current' : '');
 
-    // Packaging: the page itself
+    // Packaging: who the page is
     {
       const p = st.packaging, el = $('cardPack');
       el.className = cur('packaging');
-      let h = head('Packaging', steps.packaging.status, p.previewUrl ? `<a class="btn quiet" href="${p.previewUrl}" target="_blank" rel="noopener">Open preview ↗</a>` : '');
+      let h = head('Packaging', steps.packaging.status, p.previewUrl ? `<a class="btn" href="${p.previewUrl}" target="_blank" rel="noopener">Preview ↗</a>` : '');
       if (!p.exists) h += `<div class="empty">No preview account yet.</div>`;
       else {
         const avatar = p.avatarUrl ? `<img class="avatar" src="${p.avatarUrl}?v=${Date.now() >> 14}" alt="profile picture">` : `<div class="avatar none">no picture</div>`;
@@ -355,12 +357,10 @@
         if (!p.bio) todo.push(chipBtn('pack-bio', 'Bio'));
         if (p.freeHandleCount) todo.push(`<button class="btn quiet" id="showHandles">${p.freeHandleCount} free handles</button>`);
         if (todo.length) h += `<div class="row">${todo.join('')}</div>`;
-        if (p.previewUrl) h += `<div class="mini" id="mini"><iframe src="${p.previewUrl}" title="profile preview" tabindex="-1" loading="lazy"></iframe><a class="cover" href="${p.previewUrl}" target="_blank" rel="noopener" title="open the full preview"></a></div>`;
       }
       el.innerHTML = h;
       wireChipBtns(el);
       const sh = el.querySelector('#showHandles'); if (sh) sh.onclick = openHandles;
-      fitMini();
     }
     // Reels
     {
@@ -370,8 +370,7 @@
       const cells = st.reels.map((r) => r.cover
         ? `<div class="reel" data-reel="${r.n}"><img src="${r.cover}" alt="${esc(r.slug)}" loading="lazy"><span class="num">${r.n}</span>${r.videoUrl ? '<span class="play">▶</span>' : ''}<div class="cap">${esc((r.caption || r.slug).split('\n')[0])}</div></div>`
         : `<div class="reel nocover" data-reel="${r.n}">${r.n} · ${esc(r.slug)}</div>`);
-      for (let i = st.reels.length; i < 2; i++) cells.push(`<div class="reel slot">reel ${i + 1}</div>`);
-      if (st.reels.length === 2) cells.push(`<div class="reel slot">reel 3</div>`);
+      for (let i = st.reels.length; i < 3; i++) cells.push(`<div class="reel slot">reel ${i + 1}</div>`);
       h += `<div class="reels-grid">${cells.join('')}</div>`;
       const run = st.runs.find((r) => !r.notes);
       if (run) h += `<div class="run"><span>${esc(run.name.replace(/^\d{4}-\d\d-\d\d-/, ''))}</span><span class="stages"><span class="${run.plan ? 'on' : ''}">plan</span><span class="${run.candidates ? 'on' : ''}">frames</span><span class="${run.selected ? 'on' : ''}">picks</span><span class="${run.clips ? 'on' : ''}">clips</span><span class="${run.music ? 'on' : ''}">music</span></span>${run.contact ? `<a class="btn quiet" href="${run.contact}" target="_blank" rel="noopener">sheet</a>` : ''}</div>`;
@@ -412,12 +411,6 @@
     }
   }
 
-  function fitMini() {
-    const m = document.getElementById('mini');
-    if (!m) return;
-    m.querySelector('iframe').style.transform = `scale(${m.clientWidth / 1280})`;
-  }
-  window.addEventListener('resize', fitMini);
 
   function wireDrop(label, kind) {
     if (!label) return;
