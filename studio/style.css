@@ -211,7 +211,10 @@ textarea, input { font: inherit; letter-spacing: inherit; color: inherit; }
 
 /* packaging */
 .pack { display: grid; grid-template-columns: 72px 1fr; gap: 16px; align-items: center; }
-.avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: var(--panel-2); border: 2px solid var(--hot); box-shadow: 0 0 18px rgba(255, 138, 61, 0.35); }
+/* the story ring, the same gradient as the Instagram preview */
+.avatar { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; background: var(--panel-2); }
+.pack .ring { width: 72px; height: 72px; border-radius: 50%; padding: 2.5px; background: linear-gradient(45deg, #ffc900 0%, #ffc900 14.6%, #ffa200 25%, #ff8500 32.3%, #ff5c1a 40.8%, #ff2c43 50%, #fe016c 59.2%, #ed018f 67.7%, #df01ad 75%, #d400c3 80.6%, #d300c5 85.4%, #d300c5 100%); }
+.pack .ring img, .pack .ring .avatar { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 2.5px solid var(--bg); background: var(--panel-2); background-image: none; outline: 0; box-shadow: none; }
 .avatar.none { border-color: var(--line-2); box-shadow: none; display: grid; place-items: center; color: var(--dim); font-size: 10px; text-align: center; }
 .handle { font-family: var(--display); font-weight: 600; letter-spacing: -0.02em; font-size: 18px; line-height: 1.1; }
 .handle.placeholder { color: var(--dim); }

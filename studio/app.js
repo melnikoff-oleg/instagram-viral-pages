@@ -347,7 +347,7 @@
       let h = head('Packaging', steps.packaging.status, p.previewUrl ? `<a class="btn" href="${p.previewUrl}" target="_blank" rel="noopener">Preview ↗</a>` : '');
       if (!p.exists) h += `<div class="empty">No preview account yet.</div>`;
       else {
-        const avatar = p.avatarUrl ? `<img class="avatar" src="${p.avatarUrl}?v=${Date.now() >> 14}" alt="profile picture">` : `<div class="avatar none">no picture</div>`;
+        const avatar = p.avatarUrl ? `<div class="ring"><img src="${p.avatarUrl}?v=${Date.now() >> 14}" alt="profile picture"></div>` : `<div class="avatar none">no picture</div>`;
         h += `<div class="pack">${avatar}<div>
           <div class="handle ${p.placeholder ? 'placeholder' : ''}">@${esc(p.username || 'yourhandle')}</div>
           <div class="bio ${p.bio ? '' : 'none'}">${p.bio ? esc(p.bio) : 'no bio yet'}</div></div></div>`;
