@@ -13,12 +13,10 @@ This folder is the starter. The account it was built for is in its own repositor
 
 1. **Claude Code, version 2.1 or newer**: `curl -fsSL https://claude.ai/install.sh | bash` on macOS and Linux, `irm https://claude.ai/install.ps1 | iex` in PowerShell on Windows. Run `claude` once in a terminal and sign in. It needs a Claude subscription (Pro or better; the free plan does not include Claude Code). This is the thing that does the work, so `claude --version` has to print a number before anything else will.
 2. **Python 3** (already on macOS and Linux; python.org on Windows), with `pip3 install pillow`.
-3. **The Higgsfield MCP**, which is where the images and the video come from. In a terminal: `claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp`, then inside Claude Code type `/mcp` and sign in. `--scope user` matters: without it the server is tied to the folder the line was run in, and Claude Code started in this folder would not see it. A Higgsfield plan with credits; a full reel is about 85 credits.
+3. **The Higgsfield MCP**, which is where the images and the video come from. Connecting it has two parts. In a terminal: `claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp` (it prints `Added HTTP MCP server higgsfield`). Then start `claude`, type `/mcp`, put the cursor on **higgsfield**, press Enter, pick **Authenticate**, sign in on higgsfield.ai in the browser and approve; the line now says connected. Check from the terminal with `claude mcp list`: the higgsfield line must end in `✔ Connected`. `! Needs authentication` means the second part did not happen. `--scope user` matters: without it the server is tied to the folder the line was run in, and Claude Code started in this folder would not see it. A Higgsfield plan with credits; a full reel is about 85 credits.
 4. **The Higgsfield CLI**, only so the studio can show your balance: `npm install -g @higgsfield/cli` (or the installer on higgsfield.ai), then `higgsfield auth login`. Everything else works without it.
-5. **An Apify key** (console.apify.com, free tier is enough): username checks, Pinterest references and music research run through Apify actors, for cents per run. Paste it into the Keys box in the studio.
+5. **An Apify key** (console.apify.com, free tier is enough; Settings → API & Integrations → Personal API token, it starts with `apify_api_`): username checks, Pinterest references and music research run through Apify actors, for cents per run. It goes into the `.env` file, see **Keys** below.
 6. **ffmpeg, node 22 and yt-dlp** for the reels: `brew install ffmpeg node yt-dlp` on a Mac. Claude Code will install what is missing if you ask it.
-
-Not needed: an Anthropic API key. Nothing here calls the Claude API; Claude Code runs on your subscription.
 
 ## Get it
 
@@ -33,6 +31,21 @@ Everything happens inside this folder. Claude Code works on the folder it is sta
 3. **Start Claude Code in that terminal**: type `claude` and press Enter. The welcome box shows the folder's path.
 
 The same three moves bring you back tomorrow.
+
+## Keys: the `.env` file
+
+The scripts read your keys from one small file called `.env` at the top level of this folder, next to this README. It is not in the download; you create it:
+
+1. In VS Code, right-click the empty space under the file list (the Explorer) → **New File**. Name it exactly `.env`: a dot, then `env`, nothing else.
+2. Paste one line per key, `NAME=value`, no spaces around the equals sign, no quotes, nothing else on the line:
+
+       APIFY_API_KEY=apify_api_xxxxxxxxxxxxxxxxxxxxxxxx
+
+3. Save. That is all for today.
+
+The name must be exactly `APIFY_API_KEY`, in capitals; that is what the scripts look for. An optional second line, `GEMINI_API_KEY=...` (free tier at aistudio.google.com/apikey), is only for the motion analysis in the autopilot stage; skip it until then. The **Keys** button at the top right of the studio writes the same file for you if you prefer to paste the key there. `.env` is git-ignored, so it never leaves your machine, and Claude Code is told never to print a key back. Files starting with a dot are hidden by Finder and Windows Explorer; VS Code shows them. On Windows, if it came out as `.env.txt`, rename it to `.env`.
+
+Not needed, ever: an Anthropic API key. Nothing here calls the Claude API; Claude Code runs on your subscription.
 
 ## Run
 
@@ -76,8 +89,8 @@ Then open http://localhost:8788. On a Mac, double-click `start.command` instead;
 
 - **"Claude Code is not installed"** in the chat: run `claude` in a terminal; until that works, the studio cannot.
 - **The balance pill says unknown**: the Higgsfield CLI is missing or not signed in (`higgsfield auth login`). Generation still works through the MCP.
-- **"Higgsfield MCP missing"** at the top: Claude Code does not see the server. Run the `claude mcp add` line above (with `--scope user`) and sign in with `/mcp`.
-- **A step says a key is missing**: the Keys button at the top right.
+- **"Higgsfield MCP missing"** at the top: Claude Code does not see the server. `claude mcp list` in the terminal says which part is missing: no higgsfield line, run the `claude mcp add` line above (with `--scope user`); `! Needs authentication`, start `claude`, `/mcp`, Authenticate.
+- **A step says a key is missing**: the `.env` file (see **Keys** above), or the Keys button at the top right, which writes it for you.
 - **Port 8788 is busy**: `python3 studio/serve.py --port 8790`.
 - Anything else: say it in the chat. Claude Code wrote the setup and can read its own errors.
 

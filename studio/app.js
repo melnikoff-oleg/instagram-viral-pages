@@ -560,7 +560,7 @@
         ${row('node', t.node && t.node.ok, t.node && t.node.version)}
         ${row('yt-dlp', t['yt-dlp'] && t['yt-dlp'].ok, t['yt-dlp'] && t['yt-dlp'].version)}
       </div>
-      <p class="small">Missing something? Say "install what is missing from the Keys box" in the chat. MCP: <code>claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp</code>, then <code>/mcp</code> in Claude Code. Balance: <code>higgsfield auth login</code>.</p>
+      <p class="small">Missing something? Say "install what is missing from the Keys box" in the chat. MCP: <code>claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp</code> in the terminal, then <code>/mcp</code> in Claude Code and Authenticate; <code>claude mcp list</code> must say Connected. Balance: <code>higgsfield auth login</code>.</p>
       <div class="row"><button class="btn" id="kCancel">Close</button><button class="btn hot" id="kSave">Save</button></div>`);
     $('kCancel').onclick = closeModal;
     $('kSave').onclick = async () => {
