@@ -9,19 +9,28 @@
         {
           "id": "concept-interview",
           "label": "Help me find my idea",
-          "minutes": [3, 8],
+          "minutes": [
+            3,
+            8
+          ],
           "prompt": "Step 1: help me choose the idea for my viral Instagram page. Interview me one question at a time: what I could watch endlessly, what I know more about than most people, which visual worlds I love, how much time a week I have. Keep every message under 80 words. When you have enough, propose 5 page concepts, each in two lines: the idea in one line, and why it can go viral (recognised in under a second, repeatable as a series, one clear look). Wait for my pick before writing any file."
         },
         {
           "id": "concept-write",
-          "label": "Write the concept document",
-          "minutes": [3, 6],
+          "label": "Write the concept",
+          "minutes": [
+            3,
+            6
+          ],
           "prompt": "Step 1: write concept/instagram-concept.md for the idea we agreed on, in the same shape as the example in concept/examples/: the idea in one line, what the account is, three pillars, the look in detail (sky, light, colour, lens, grain), the series structure (4 frames, 4 clips of 5 s), the subject and place pools, prompting rules, tone. Make it specific enough that an image prompt can be written from it without asking me anything. If we have not agreed on an idea yet, ask me first. When the file is written, tell me in three lines what it says and that it is in the Concept card."
         },
         {
           "id": "concept-example",
-          "label": "Use the example (cars × places)",
-          "minutes": [1, 2],
+          "label": "Use the example",
+          "minutes": [
+            1,
+            2
+          ],
           "prompt": "Step 1: copy the example concept from concept/examples/ to concept/instagram-concept.md and use it as my concept for now. Tell me in two lines what the page is and which parts I can change later (the subject pool, the place pool, the look)."
         }
       ]
@@ -36,13 +45,19 @@
         {
           "id": "refs-default",
           "label": "Keep the default vibe",
-          "minutes": [2, 4],
+          "minutes": [
+            2,
+            4
+          ],
           "prompt": "Step 2: I keep the default style references in references/visual-style/. Look at each image and write references/README.md: ten short lines on what makes the look (sky, grain, the one light source, colour grade, lens and distance, what is never in frame), so every image prompt can match it. Check that the 'look' section of concept/instagram-concept.md agrees with the images and fix it where it does not. Tell me in four lines what the look is."
         },
         {
           "id": "refs-mine",
-          "label": "Analyse my references",
-          "minutes": [3, 6],
+          "label": "Analyse mine",
+          "minutes": [
+            3,
+            6
+          ],
           "prompt": "Step 2: I dropped my own style references into references/visual-style/. Look at every image, describe the shared look in references/README.md (sky, light, colour, grain, lens, framing, what is never in frame), and rewrite the 'look' section of concept/instagram-concept.md to match them. If the images disagree with each other, tell me which ones to remove. Tell me in five lines what the look is."
         }
       ]
@@ -56,25 +71,37 @@
         {
           "id": "pack-username",
           "label": "Find a free username",
-          "minutes": [6, 12],
+          "minutes": [
+            6,
+            12
+          ],
           "prompt": "Step 3a: find me a free Instagram username. Read concept/instagram-concept.md and propose about 60 handles in different styles (two words with a dot, one invented word, a term from the craft, a number that means something), each under 14 characters, lowercase, no hype words. Check them with `python3 username-finder/find-usernames.py --check <comma-separated>` in groups of 20 (it needs APIFY_API_KEY in .env; if the key is missing, ask me to paste it into the Keys box at the top right of the studio and stop). Show me the free ones ranked by fit with one line each and ask which I want. When I pick, set HANDLE in instagram-preview/my-account.js and tell me the Packaging card has it."
         },
         {
           "id": "pack-picture",
-          "label": "Make my profile picture",
-          "minutes": [4, 8],
+          "label": "Profile picture",
+          "minutes": [
+            4,
+            8
+          ],
           "prompt": "Step 3b: make my profile picture with Higgsfield. Identity reference: references/headshot.* (my face). Style references: the images in references/visual-style/. Follow the profile picture rule in CLAUDE.md: my face lit by the one hot light that belongs to the concept, the concept's sky behind, heavy film grain, a hint of the subject behind me, square 1:1, nothing tack sharp. Generate 3 variants, download them into instagram-preview/assets/mine/ as profile.jpg, profile-alt-1.jpg and profile-alt-2.jpg, make sure avatar in my-account.js points at assets/mine/profile.jpg, and tell me to pick in the Packaging card. If there is no headshot, say so, and make a faceless version from the concept instead."
         },
         {
           "id": "pack-bio",
-          "label": "Write my bio and note",
-          "minutes": [2, 4],
+          "label": "Bio and note",
+          "minutes": [
+            2,
+            4
+          ],
           "prompt": "Step 3c: write the bio and the note bubble for my account in instagram-preview/my-account.js following the packaging conventions in CLAUDE.md: lowercase, one idea per line, three lines, no hype, no emojis; category 'Digital creator'; the note short and cheeky. Show me two options first; write the one I pick (or your favourite if I say 'you choose')."
         },
         {
           "id": "pack-all",
-          "label": "Do the whole packaging",
-          "minutes": [15, 25],
+          "label": "Do all three",
+          "minutes": [
+            15,
+            25
+          ],
           "prompt": "Step 3: do the whole packaging in order: (a) find a free username with username-finder (propose 60, check in groups of 20 with --check, show me the free ones, wait for my pick), (b) make the profile picture with Higgsfield from references/headshot.* plus the style references, 3 variants into instagram-preview/assets/mine/, (c) write the bio and note into instagram-preview/my-account.js following CLAUDE.md. Stop and ask me only at the username pick and the bio options. Tell me when the Packaging card is complete."
         }
       ]
@@ -88,19 +115,28 @@
         {
           "id": "reel-plan",
           "label": "Plan the next reel",
-          "minutes": [3, 6],
+          "minutes": [
+            3,
+            6
+          ],
           "prompt": "Step 4: plan my next reel. Read concept/instagram-concept.md, reels/README.md (what exists) and full-pipeline/README.md. Pick the pairing for the next series (the most recognisable one left, a strong colour contrast, a weather story) and write full-pipeline/runs/<today>-<slug>/plan.md with the 4 frames (opener, play, peak, funny ending) using the shot codes in motion-study/sop.md, one screen direction, the landmark in at least 3 of 4. Show me the plan in 8 lines and ask for a go."
         },
         {
           "id": "reel-make",
-          "label": "Make the next reel, start to finish",
-          "minutes": [35, 60],
+          "label": "Make the next reel",
+          "minutes": [
+            35,
+            60
+          ],
           "prompt": "Step 4: make the next reel start to finish, with full-pipeline/README.md as the procedure and the latest run folder as the worked example. Check the Higgsfield balance first and tell me the credits this will cost before spending anything; if the balance is under 100 credits, stop and tell me. Then: plan (or reuse the plan we agreed on), one subject reference (Pinterest via pinterest-refs if APIFY_API_KEY is set, otherwise ask me for one photo), 16 image candidates, the contact sheet and your picks (show me, one per frame, and wait for my ok), the 4 clips of 5 s following every rule in motion-study/sop.md (wheels spinning, real-time speed, one camera behaviour, near layers, continuity line), 3 music tracks, the stitched reels, the cover, the post in instagram-preview/my-account.js and the row in reels/README.md. Write run.md. Tell me what landed in the Reels card and what you would change next time."
         },
         {
           "id": "reel-judge",
-          "label": "Judge the last reel, improve the prompts",
-          "minutes": [5, 10],
+          "label": "Judge the last reel",
+          "minutes": [
+            5,
+            10
+          ],
           "prompt": "Step 4: judge the last reel honestly. Extract frames from each clip with ffmpeg (one every 0.5 s) and look at them against motion-study/sop.md and the concept: first frame readable, wheels spinning, speed, camera behaviour constant, near layers, continuity, cut contrast, the look. List what is wrong in plain words, then update full-pipeline/prompts/*.md and the run's run.md so the next reel avoids it. Tell me the three biggest changes."
         }
       ]
@@ -114,19 +150,28 @@
         {
           "id": "post-checklist",
           "label": "Posting checklist",
-          "minutes": [2, 4],
+          "minutes": [
+            2,
+            4
+          ],
           "prompt": "Step 5: write posting/checklist.md for a brand new account: create the account with the handle, picture and bio from the Packaging card; post through the Edits app (Instagram's own editing app) for the first weeks; one reel a day at the same hour; the caption format from CLAUDE.md; add the music inside Instagram or Edits, never baked into the file; what to watch in the first 48 hours; when to stop and change something. Show it to me in 10 lines."
         },
         {
           "id": "post-today",
-          "label": "Prepare today's post",
-          "minutes": [1, 3],
+          "label": "Today's post",
+          "minutes": [
+            1,
+            3
+          ],
           "prompt": "Step 5: prepare today's post. Which reel is next (reels/README.md, newest unposted), its caption and hashtags exactly as they should be pasted, the music track to add in Instagram, and the file to upload. Put the file path and the caption in a code block so I can copy them, then mark it as posted today in reels/README.md once I say it is up."
         },
         {
           "id": "post-improve",
           "label": "Improve from what I see",
-          "minutes": [4, 8],
+          "minutes": [
+            4,
+            8
+          ],
           "prompt": "Step 5: I will paste what I am seeing on the account (views, likes, saves, comments per reel, and what people say). Read it, tell me what to change in the next series (pairing, opener, speed, music, caption, posting hour), then update full-pipeline/prompts/*.md and concept/instagram-concept.md where the change belongs. Ask me for the numbers if I have not pasted them."
         }
       ]
@@ -139,14 +184,20 @@
       "chips": [
         {
           "id": "auto-blotato",
-          "label": "Set up Blotato publishing",
-          "minutes": [10, 20],
+          "label": "Blotato publishing",
+          "minutes": [
+            10,
+            20
+          ],
           "prompt": "Step 6a: set up automatic publishing with Blotato (blotato.com, it has an API for posting to Instagram). Ask me for my Blotato API key and the connected account id (put them in .env), then write publishing/blotato-publish.py: it takes the next unposted reel from reels/README.md, uploads the main mp4 with its caption, marks it posted, and has a --dry-run that only prints what it would do. Add publishing/README.md with how to run it daily (cron on a Mac, Task Scheduler on Windows). Nothing is posted until I run it without --dry-run."
         },
         {
           "id": "auto-loop",
-          "label": "Build the Apify + Gemini improvement loop",
-          "minutes": [15, 30],
+          "label": "Improvement loop",
+          "minutes": [
+            15,
+            30
+          ],
           "prompt": "Step 6b: build the improvement loop. analytics/pull.py scrapes my own account's reels with Apify (views, likes, comments, saves, posted at); analytics/judge.py sends the best and the worst performer to Gemini clip by clip (start from motion-study/analyze.py) and writes analytics/<date>.md: what the winners share, what the losers share, and the exact prompt changes to make in full-pipeline/prompts/*.md. Keys from .env (APIFY_API_KEY, GEMINI_API_KEY); if one is missing, ask me to paste it into the Keys box. Dry-run it on the reels I already have and show me the report."
         }
       ]
@@ -160,7 +211,10 @@
         {
           "id": "money-plan",
           "label": "Monetization plan",
-          "minutes": [3, 6],
+          "minutes": [
+            3,
+            6
+          ],
           "prompt": "Step 7: write monetization/plan.md for this page: referral links that fit the audience (which products, how to present them, where: bio link, pinned comment, story), a digital product that fits the concept (what, price, how it is made with this same pipeline), a service, and what each needs in the bio and captions. One page, concrete to this concept, and honest about what works at 1M views and what needs more. Show me the three options in 6 lines."
         }
       ]
