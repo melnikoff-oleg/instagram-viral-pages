@@ -1,0 +1,54 @@
+{
+ "name": "skrillex-noisia-josh-pan-dylan-brady-sup",
+ "track": "music/03-skrillex-noisia-josh-pan-dylan-brady-sup.m4a",
+ "bpm": 86.4,
+ "beat": 0.6944,
+ "drop": {
+  "time": 27.975,
+  "jump": 5747.141591785812,
+  "before": 3404.480701226181,
+  "after": 9151.622293011993,
+  "runners_up": [
+   {
+    "time": 55.875,
+    "jump": 5502.604850025379
+   },
+   {
+    "time": 58.655,
+    "jump": 5016.733262450424
+   },
+   {
+    "time": 30.745,
+    "jump": 4203.020132865425
+   }
+  ]
+ },
+ "drop_at_cut": 1,
+ "media_start": 23.114,
+ "clip_durations": [
+  5.041667,
+  5.041667,
+  5.041667,
+  5.041667
+ ],
+ "clip_max": {
+  "3": 2.8
+ },
+ "clip_in": {},
+ "timeline_durations": [
+  4.861,
+  4.861,
+  2.778,
+  5.042
+ ],
+ "timeline_starts": [
+  0,
+  4.861,
+  9.722,
+  12.5
+ ],
+ "total": 17.542,
+ "clip_vol": 0.5,
+ "music_vol": 0.9,
+ "output": "/Users/olegmelnikov/Desktop/ViralCars/reels/mustang-monument-valley/mustang-monument-valley-skrillex-noisia-josh-pan-dylan-brady-sup.mp4"
+}

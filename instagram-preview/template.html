@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instagram</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Crect x='3' y='3' width='18' height='18' rx='5'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Ccircle cx='17.5' cy='6.5' r='1' fill='%23f5f5f5'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0c1014; --bg-elev:#000; --text:#f5f5f5; --sec:#a8a8a8; --link:#708dff; --link-icon:#85a1ff;
+  --btn:#4a5df9; --btn-hover:#3b4bd6; --btn2:#25292e; --btn2-hover:#353a40; --sep:#262626; --cell:#262626;
+  --badge:#ff3040; --font:-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:18px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+svg.ic{display:block;flex:none}
+body.modal-open{overflow:hidden}
+
+/* ---------- left nav ---------- */
+.nav{position:fixed;left:0;top:0;bottom:0;width:72px;padding:24px 12px 24px;display:flex;flex-direction:column;z-index:20;background:var(--bg)}
+.nav .logo{margin-bottom:46px}
+.nav-item{flex:none;position:relative;width:48px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;transition:background .2s}
+.nav-item:hover{background:rgba(255,255,255,.1)}
+.nav-item:hover svg,.nav-item:hover img{transform:scale(1.05)}
+.nav-item svg,.nav-item img{transition:transform .2s}
+.nav-item img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.nav .spacer{flex:1}
+.badge{position:absolute;left:24px;top:26px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--badge);color:#fff;font-size:11px;line-height:18px;font-weight:400;text-align:center;box-shadow:0 0 0 2px var(--bg);display:flex;align-items:center;justify-content:center}
+.dot{position:absolute;left:31px;top:17px;width:8px;height:8px;border-radius:50%;background:var(--badge);box-shadow:0 0 0 2px var(--bg)}
+
+/* ---------- page ---------- */
+.page{width:1119px;max-width:calc(100% - 72px);margin:0 auto;padding-top:30px}
+.header{width:680px;max-width:100%;margin:0 auto;display:flex;align-items:flex-start;padding:0}
+.avatar-wrap{position:relative;width:150px;height:150px;margin:18px 0 0;flex:none}
+.avatar-wrap .ring{position:absolute;left:-6px;top:-6px;width:162px;height:162px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#ffc900 0%,#ffc900 14.6%,#ffa200 25%,#ff8500 32.3%,#ff5c1a 40.8%,#ff2c43 50%,#fe016c 59.2%,#ed018f 67.7%,#df01ad 75%,#d400c3 80.6%,#d300c5 85.4%,#d300c5 100%)}
+.avatar-wrap .ring::after{content:"";display:block;width:100%;height:100%;border-radius:50%;background:var(--bg)}
+.avatar-wrap img{position:relative;width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;cursor:pointer}
+.info{margin-left:28px;padding-top:17px;flex:1;min-width:0}
+.name-row{display:flex;align-items:center;height:30px}
+.name-row h2{margin:0;font-size:24px;font-weight:700;line-height:30px;letter-spacing:-.2px}
+.name-row .verified{margin-left:8px}
+.name-row .options{margin-left:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin-top:-1px}
+.name-row .options:hover{background:rgba(255,255,255,.08)}
+.note{margin-top:5px;font-size:14px}
+.counts{display:flex;gap:16px;margin-top:12px}
+.counts b{font-weight:600}
+.counts a{cursor:pointer}
+.category{margin-top:20px;color:var(--sec)}
+.bio{margin-top:5px;white-space:pre-wrap;word-break:break-word}
+.links{margin-top:7px;display:flex;align-items:center;gap:16px}
+.links .ext{display:flex;align-items:center;gap:4px;color:var(--link);font-weight:400}
+.links .ext svg{color:var(--link-icon)}
+.links .threads{display:flex;align-items:center;gap:4px;font-weight:600}
+.actions{display:flex;gap:8px;margin-top:24px;width:680px;max-width:100%;margin-left:auto;margin-right:auto}
+.btn{height:44px;border-radius:12px;font-weight:600;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;transition:background .1s}
+.btn.primary{background:var(--btn);flex:306}
+.btn.primary:hover{background:var(--btn-hover)}
+.btn.secondary{background:var(--btn2);flex:314}
+.btn.secondary:hover{background:var(--btn2-hover)}
+.btn.icon{width:44px;flex:none;padding:0;background:var(--btn2)}
+.btn.icon:hover{background:var(--btn2-hover)}
+.header-bottom{width:680px;max-width:100%;margin:24px auto 0}
+
+/* tabs */
+.tabs{width:655px;max-width:100%;margin:44px auto 0;display:flex;justify-content:space-between;height:44px}
+.tab{width:64px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--sec);border-bottom:2px solid transparent;cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:#f8f9f9}
+
+/* grid */
+.grid{display:flex;flex-direction:column;margin-top:.5px}
+.row{display:flex;margin-bottom:1px}
+.cell{position:relative;width:calc((100% - 3px)/4);margin-right:1px;aspect-ratio:3/4;background:var(--cell);display:block;overflow:hidden;cursor:pointer}
+.cell:nth-child(4n){margin-right:0}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.cell .mark{position:absolute;top:8px;right:9px;color:#fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.35))}
+.cell .hover{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:30px;opacity:0;transition:opacity .15s;color:#fff;font-weight:700;font-size:16px}
+.cell:hover .hover{opacity:1}
+.cell .hover span{display:flex;align-items:center;gap:7px}
+.empty{padding:60px 0 100px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.empty .circle{width:62px;height:62px;border:2px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.empty h3{font-size:30px;font-weight:800;margin:0 0 24px;line-height:36px}
+.empty p{margin:0;max-width:350px}
+
+/* footer */
+footer{padding:24px 16px 52px;font-size:12px;color:var(--sec);text-align:center}
+footer .links{display:flex;flex-wrap:wrap;justify-content:center;gap:11px 16px;margin:0}
+footer .links a:hover{text-decoration:underline}
+footer .meta{display:flex;justify-content:center;gap:16px;margin-top:24px;align-items:center}
+footer .meta .lang{display:flex;align-items:center;gap:4px}
+
+
+/* ---------- post dialog ---------- */
+.dialog{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:50;align-items:center;justify-content:center}
+.dialog.open{display:flex}
+.dialog .close{position:absolute;top:16px;right:16px;color:#fff;padding:8px}
+.dialog .arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;opacity:.9}
+.dialog .arrow:hover{opacity:1}
+.dialog .arrow.prev{left:16px}.dialog .arrow.next{right:16px}
+.post{display:flex;background:#000;max-height:calc(100vh - 48px);max-width:calc(100vw - 128px);border-radius:4px;overflow:hidden}
+.post .media{position:relative;background:#000;display:flex;align-items:center;justify-content:center;max-width:calc(100vw - 128px - 500px)}
+.post .media img{display:block;max-height:calc(100vh - 48px);max-width:100%;height:calc(100vh - 48px);object-fit:contain}
+.post .media .sound[hidden]{display:none}
+.post .media .sound{position:absolute;right:16px;bottom:16px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;color:#fff;z-index:2}
+/* reel mode: 9:16 video, autoplay with sound */
+.post.reel{max-height:calc(100vh - 48px)}
+.post.reel .media{width:calc((100vh - 48px) * 9 / 16);height:calc(100vh - 48px);cursor:pointer}
+.post.reel .media img{display:none}
+.post .media video{display:none}
+.post.reel .media video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.post .media .playov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:#fff;pointer-events:none}
+.post.reel.paused .media .playov{display:flex}
+.post.reel.paused .media .playov svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.post .side{width:500px;flex:none;background:var(--bg);display:flex;flex-direction:column;border-left:1px solid var(--sep)}
+.post .side .top{display:flex;align-items:center;padding:14px 4px 14px 16px;min-height:72px;border-bottom:1px solid var(--sep);position:relative}
+.post.reel .side .top{min-height:90px}
+.ava{position:relative;width:32px;height:32px;flex:none}
+.ava img{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;object-fit:cover;display:block}
+.ava.ring::before{content:"";position:absolute;left:-3.5px;top:-3.5px;width:39px;height:39px;border-radius:50%;background:linear-gradient(45deg,#ffc900 0%,#ffc900 14.6%,#ffa200 25%,#ff8500 32.3%,#ff5c1a 40.8%,#ff2c43 50%,#fe016c 59.2%,#ed018f 67.7%,#df01ad 75%,#d400c3 80.6%,#d300c5 85.4%,#d300c5 100%)}
+.ava.ring::after{content:"";position:absolute;left:-2px;top:-2px;width:36px;height:36px;border-radius:50%;background:var(--bg)}
+.post .side .top .txt{margin-left:16px;min-width:0;flex:1;padding-right:36px}
+.post .side .top .row{display:flex;align-items:center;height:18px}
+.post .side .top .u{font-weight:600;color:#f8f9f9;display:flex;align-items:center;gap:4px}
+.post .side .top .dotsep{margin:0 6px;color:#f8f9f9}
+.post .side .top .follow{color:var(--link);font-weight:600}
+.post .side .top .sub{color:#a2aab4;font-size:14px;line-height:18px;margin-top:2px}
+.post .side .top .sub.audio{color:var(--text);font-size:12px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post .side .top .opt{position:absolute;right:8px;top:50%;transform:translateY(-50%)}
+.post .side .body{flex:1;overflow:auto;padding:17px 16px 16px}
+.post .side .cap{display:flex;gap:16px}
+.post .side .cap .t{white-space:pre-wrap;word-break:break-word;line-height:18px}
+.post .side .cap .t b{font-weight:500;color:#fff;margin-right:4px}
+.post .side .cap .t .vb{display:inline-block;vertical-align:-1px;margin-right:4px}
+.post .side .cap .meta{margin-top:6px;font-size:12px;line-height:16px;color:#a2aab4}
+/* comments under the caption (Instagram desktop dialog) */
+.post .side .comments{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.post .side .comments:empty{display:none}
+.post .side .cm{display:flex;gap:16px;align-items:flex-start}
+.post .side .cm .cava{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;display:block}
+.post .side .cm.small .cava{width:24px;height:24px}
+.post .side .cm .c{flex:1;min-width:0}
+.post .side .cm .t{white-space:pre-wrap;word-break:break-word;line-height:18px}
+.post .side .cm .t b{font-weight:600;color:#f8f9f9;margin-right:4px}
+.post .side .cm .t .vb{display:inline-block;vertical-align:-1px;margin-right:4px}
+.post .side .cm .meta{margin-top:6px;font-size:12px;line-height:16px;color:#a2aab4;display:flex;gap:12px}
+.post .side .cm .meta b{font-weight:600}
+.post .side .cm .heart{color:var(--sec);padding:3px 0 0;flex:none}
+.post .side .cm .heart:hover{color:var(--text)}
+.post .side .cm .heart.on{color:#ff3040}
+.post .side .replies{margin-top:12px}
+.post .side .replies .vr{display:flex;align-items:center;gap:16px;font-size:12px;line-height:16px;font-weight:600;color:#a2aab4}
+.post .side .replies .vr::before{content:"";width:24px;height:1px;background:#a2aab4}
+.post .side .replies .rl{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.post .side .replies .rl[hidden]{display:none}
+.post .side .bottom{border-top:1px solid var(--sep);padding:6px 16px 16px}
+.post .side .icons{display:flex;align-items:center;gap:18px;height:40px}
+.post .side .icons .save{margin-left:auto}
+.post .side .icons button:hover{color:var(--sec)}
+.post .side .likes{font-weight:600;margin-top:8px}
+.post .side .date{color:var(--sec);font-size:12px;margin-top:4px}
+.post .side .comment{display:flex;align-items:center;gap:12px;border-top:1px solid var(--sep);padding:12px 16px 12px;color:var(--sec)}
+.post .side .comment input{flex:1;background:none;border:0;color:var(--text);font:inherit;outline:none}
+.post .side .comment input::placeholder{color:var(--sec)}
+.post .side .comment .postbtn{color:var(--link);font-weight:600;opacity:.4}
+
+@media (max-width:1240px){.page{max-width:calc(100% - 72px);margin-left:72px}}
+</style>
+</head>
+<body>
+<!--SPRITE-->
+
+<nav class="nav" aria-label="Primary">
+  <a class="nav-item logo" href="#" title="Instagram"><svg class="ic" width="24" height="24"><use href="#ic-logo"/></svg></a>
+  <a class="nav-item" href="#" title="Home"><svg class="ic" width="24" height="24"><use href="#ic-home"/></svg></a>
+  <a class="nav-item" href="#" title="Reels"><svg class="ic" width="24" height="24"><use href="#ic-reels"/></svg></a>
+  <a class="nav-item" href="#" title="Messages"><svg class="ic" width="24" height="24"><use href="#ic-messages"/></svg><span class="badge" id="msgBadge">6</span></a>
+  <a class="nav-item" href="#" title="Search"><svg class="ic" width="24" height="24"><use href="#ic-search"/></svg></a>
+  <a class="nav-item" href="#" title="Notifications"><svg class="ic" width="24" height="24"><use href="#ic-heart"/></svg><span class="dot"></span></a>
+  <a class="nav-item" href="#" title="New post"><svg class="ic" width="24" height="24"><use href="#ic-plus"/></svg></a>
+  <a class="nav-item" href="#" title="Professional dashboard"><svg class="ic" width="24" height="24"><use href="#ic-dash"/></svg></a>
+  <a class="nav-item" href="#" title="Profile"><img id="viewerAvatar" alt="Your profile picture"></a>
+  <div class="spacer"></div>
+  <a class="nav-item" href="#" title="Settings"><svg class="ic" width="24" height="24"><use href="#ic-menu"/></svg></a>
+  <a class="nav-item" href="#" title="Also from Meta"><svg class="ic" width="24" height="24"><use href="#ic-meta"/></svg></a>
+</nav>
+
+<main class="page">
+  <header class="header">
+    <div class="avatar-wrap">
+      <div class="ring" id="ring"></div>
+      <img id="avatar" alt="profile picture">
+    </div>
+    <section class="info">
+      <div class="name-row">
+        <h2 id="username">iamnotsrc</h2>
+        <svg class="ic verified" id="verified" width="18" height="18"><use href="#ic-verified"/></svg>
+        <button class="options" title="Options"><svg class="ic" width="16" height="16"><use href="#ic-options"/></svg></button>
+      </div>
+      <div class="note" id="note"></div>
+      <ul class="counts" style="list-style:none;margin:12px 0 0;padding:0">
+        <li><b id="cPosts"></b> posts</li>
+        <li><a href="#"><b id="cFollowers"></b> followers</a></li>
+        <li><a href="#"><b id="cFollowing"></b> following</a></li>
+      </ul>
+      <div class="category" id="category"></div>
+      <div class="bio" id="bio"></div>
+      <div class="links">
+        <a class="ext" id="extLink" href="#" target="_blank" rel="noopener"><svg class="ic" width="16" height="16"><use href="#ic-link"/></svg><span id="extLinkText"></span></a>
+        <a class="threads" id="threads" href="#" target="_blank" rel="noopener"><svg class="ic" width="16" height="16"><use href="#ic-threads"/></svg><span id="threadsText"></span></a>
+      </div>
+    </section>
+  </header>
+  <div class="actions header-bottom">
+    <button class="btn primary" id="followBtn">Follow</button>
+    <button class="btn secondary">Message</button>
+    <button class="btn icon" title="Similar accounts"><svg class="ic" width="16" height="16"><use href="#ic-similar"/></svg></button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <a class="tab active" data-tab="posts" href="#" role="tab" title="Posts"><svg class="ic" width="24" height="24"><use href="#ic-tab-posts"/></svg></a>
+    <a class="tab" data-tab="reels" href="#" role="tab" title="Reels"><svg class="ic" width="24" height="24"><use href="#ic-reels"/></svg></a>
+    <a class="tab" data-tab="reposts" href="#" role="tab" title="Reposts"><svg class="ic" width="24" height="24"><use href="#ic-tab-reposts"/></svg></a>
+    <a class="tab" data-tab="tagged" href="#" role="tab" title="Tagged"><svg class="ic" width="24" height="24"><use href="#ic-tab-tagged"/></svg></a>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <div class="links">
+      <a href="#">Meta</a><a href="#">About</a><a href="#">Blog</a><a href="#">Jobs</a><a href="#">Help</a><a href="#">API</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Locations</a><a href="#">Popular</a><a href="#">Instagram Lite</a><a href="#">Meta AI</a><a href="#">Muse</a><a href="#">Threads</a><a href="#">Contact Uploading &amp; Non-Users</a><a href="#">Meta Verified</a>
+    </div>
+    <div class="meta">
+      <span class="lang">English <svg class="ic" width="12" height="12" style="transform:rotate(180deg)"><use href="#ic-chevron-down"/></svg></span>
+      <span>© 2026 Instagram from Meta</span>
+      <span class="preview-switch">Preview: <a href="index.html">iamnotsrc</a> · <a href="me.html">my draft</a></span>
+    </div>
+  </footer>
+</main>
+
+<div class="dialog" id="dialog" aria-modal="true" role="dialog">
+  <button class="close" id="dlgClose" title="Close"><svg class="ic" width="18" height="18"><use href="#ic-close"/></svg></button>
+  <button class="arrow prev" id="dlgPrev"><svg class="ic" width="16" height="16"><use href="#ic-chevron-left"/></svg></button>
+  <button class="arrow next" id="dlgNext"><svg class="ic" width="16" height="16"><use href="#ic-chevron-right"/></svg></button>
+  <article class="post" id="postCard">
+    <div class="media" id="dlgMedia"><img id="dlgImg" alt=""><video id="dlgVideo" playsinline loop preload="auto"></video><span class="playov"><svg class="ic" width="72" height="72"><use href="#ic-play"/></svg></span><button class="sound" id="dlgSound" hidden title="Toggle audio"><svg class="ic" width="12" height="12"><use href="#ic-audio-on"/></svg></button></div>
+    <div class="side">
+      <div class="top">
+        <div class="ava ring"><img id="dlgAvatar" alt=""></div>
+        <div class="txt">
+          <div class="row"><span class="u"><span id="dlgUser"></span><svg class="ic vb" width="12" height="12"><use href="#ic-verified"/></svg></span>
+          <span class="dotsep">•</span><button class="follow">Follow</button></div>
+          <div class="sub" id="dlgLabel"></div>
+          <div class="sub audio" id="dlgAudio"></div>
+        </div>
+        <button class="opt" title="More options"><svg class="ic" width="24" height="24"><use href="#ic-options"/></svg></button>
+      </div>
+      <div class="body">
+        <div class="cap">
+          <div class="ava ring"><img id="dlgAvatar2" alt=""></div>
+          <div><div class="t"><b id="dlgUser2"></b><svg class="ic vb" width="12" height="12"><use href="#ic-verified"/></svg><span id="dlgCaption"></span></div><div class="meta" id="dlgAgo"></div></div>
+        </div>
+        <div class="comments" id="dlgComments"></div>
+      </div>
+      <div class="bottom">
+        <div class="icons">
+          <button id="likeBtn" title="Like"><svg class="ic" width="24" height="24"><use href="#ic-like"/></svg></button>
+          <button title="Comment"><svg class="ic" width="24" height="24"><use href="#ic-comment"/></svg></button>
+          <button class="repost" title="Repost"><svg class="ic" width="24" height="24"><use href="#ic-tab-reposts"/></svg></button>
+          <button title="Share"><svg class="ic" width="24" height="24"><use href="#ic-share"/></svg></button>
+          <button class="save" title="Save"><svg class="ic" width="24" height="24"><use href="#ic-save"/></svg></button>
+        </div>
+        <div class="likes" id="dlgLikes"></div>
+        <div class="date" id="dlgDate"></div>
+      </div>
+      <div class="comment">
+        <svg class="ic" width="24" height="24"><use href="#ic-emoji"/></svg>
+        <input placeholder="Add a comment…">
+        <span class="postbtn">Post</span>
+      </div>
+    </div>
+  </article>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const P = window.IG_PROFILE, POSTS = window.IG_POSTS;
+  const $ = id => document.getElementById(id);
+  // local files keep their names when swapped (profile.jpg), so bust the browser cache on every load
+  const V = '?v=' + Date.now(), bust = u => u ? u + V : u;
+  P.avatar = bust(P.avatar); P.viewerAvatar = bust(P.viewerAvatar);
+  // ---- profile header
+  document.title = `${P.fullName || P.username} (@${P.username}) • Instagram photos and videos`;
+  $('avatar').src = P.avatar; $('avatar').alt = `${P.username}'s profile picture`;
+  $('ring').style.display = P.storyRing ? '' : 'none';
+  $('username').textContent = P.username;
+  $('verified').style.display = P.verified ? '' : 'none';
+  $('note').textContent = P.note || ''; $('note').style.display = P.note ? '' : 'none';
+  $('cPosts').textContent = P.posts; $('cFollowers').textContent = P.followers; $('cFollowing').textContent = P.following;
+  $('category').textContent = P.category || ''; $('category').style.display = P.category ? '' : 'none';
+  $('bio').textContent = P.bio || '';
+  if (P.link) { $('extLink').href = P.link.href; $('extLinkText').textContent = P.link.text; } else $('extLink').style.display = 'none';
+  if (P.threads) { $('threads').href = 'https://www.threads.com/@' + P.threads; $('threadsText').textContent = P.threads; } else $('threads').style.display = 'none';
+  $('viewerAvatar').src = P.viewerAvatar || P.avatar;
+
+  // follow toggle
+  const fb = $('followBtn');
+  fb.addEventListener('click', () => {
+    const on = fb.classList.toggle('secondary'); fb.classList.toggle('primary', !on);
+    fb.innerHTML = on ? 'Following <svg class="ic" width="12" height="12" style="margin-left:6px"><use href="#ic-chevron-down"/></svg>' : 'Follow';
+  });
+
+  // ---- deterministic fake engagement numbers so the hover overlay looks real
+  const h = s => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return x; };
+  const fmt = n => n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'') + 'K' : String(n);
+  POSTS.forEach((p, i) => { const x = h(p.href || p.file); p.likes = p.likes ?? 1800 + (x % 23000); p.comments = p.comments ?? 12 + (x % 190); p.daysAgo = p.daysAgo ?? (i * 3 + 1); });
+
+  // ---- grid
+  const grid = $('grid');
+  const svg = (id, s) => `<svg class="ic" width="${s}" height="${s}"><use href="#${id}"/></svg>`;
+  function render(tab) {
+    grid.innerHTML = '';
+    let list = POSTS;
+    if (tab === 'reels') list = POSTS.filter(p => p.kind === 'reel');
+    if (tab === 'reposts' || tab === 'tagged') {
+      grid.innerHTML = tab === 'tagged'
+        ? `<div class="empty"><div class="circle">${svg('ic-tab-tagged', 32)}</div><h3>Photos of you</h3><p>When people tag you in photos, they'll appear here.</p></div>`
+        : `<div class="empty"><div class="circle">${svg('ic-tab-reposts', 32)}</div><h3>No reposts yet</h3><p>Reposted reels and posts will show up here.</p></div>`;
+      return;
+    }
+    for (let r = 0; r < list.length; r += 4) {
+      const row = document.createElement('div'); row.className = 'row';
+      list.slice(r, r + 4).forEach(p => {
+        const a = document.createElement('a'); a.className = 'cell'; a.href = p.href || '#'; a.dataset.idx = POSTS.indexOf(p);
+        const mark = p.pinned ? svg('ic-pin', 20) : p.kind === 'reel' ? svg('ic-clip', 20) : p.kind === 'carousel' ? svg('ic-carousel', 20) : '';
+        a.innerHTML = `<img src="${p.file}" alt="" loading="lazy"><span class="mark">${mark}</span>
+          <div class="hover"><span>${svg('ic-like-filled', 19)} ${fmt(p.likes)}</span><span>${svg('ic-comment', 20)} ${fmt(p.comments)}</span></div>`;
+        a.addEventListener('click', e => { e.preventDefault(); open(+a.dataset.idx); });
+        row.appendChild(a);
+      });
+      grid.appendChild(row);
+    }
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => {
+    e.preventDefault(); document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); render(t.dataset.tab);
+  }));
+  render('posts');
+  if (location.hash.length > 1) { const k = POSTS.findIndex(p => (p.href||'').replace(/^\//,'') === location.hash.slice(1)); if (k >= 0) setTimeout(() => open(k), 0); }
+
+  // ---- post dialog
+  const dlg = $('dialog'); let cur = -1;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const card = $('postCard'), video = $('dlgVideo'), soundBtn = $('dlgSound');
+  let soundOn = true; // reels play with sound by default; the toggle is remembered while the page is open
+  const setSoundIcon = () => soundBtn.innerHTML = svg(soundOn ? 'ic-audio-on' : 'ic-audio-off', 12);
+  const ago = s => { const m = Math.max(1, Math.round((Date.now() / 1000 - s) / 60)); if (m < 60) return m + ' minutes ago'; const h = Math.round(m / 60); if (h < 24) return h + ' hours ago'; const d = Math.round(h / 24); if (d < 7) return d + ' days ago'; const w = Math.round(d / 7); return w + ' weeks ago'; };
+  const agoShort = s => { const h = Math.max(1, Math.round((Date.now() / 1000 - s) / 3600)); if (h < 24) return h + 'h'; const d = Math.round(h / 24); if (d < 7) return d + 'd'; return Math.round(d / 7) + 'w'; };
+  function stopVideo() { video.pause(); video.removeAttribute('src'); video.load(); card.classList.remove('paused'); }
+  function open(i) {
+    cur = i; const p = POSTS[i];
+    const isReel = p.kind === 'reel' && p.video;
+    stopVideo();
+    card.classList.toggle('reel', isReel);
+    $('dlgImg').src = p.file;
+    soundBtn.hidden = !isReel;
+    $('dlgAvatar').src = P.avatar; $('dlgAvatar2').src = P.avatar;
+    $('dlgUser').textContent = P.username; $('dlgUser2').textContent = P.username;
+    document.querySelectorAll('.post .vb').forEach(e => e.style.display = P.verified ? '' : 'none');
+    $('dlgLabel').textContent = p.label || ''; $('dlgLabel').style.display = p.label ? '' : 'none';
+    $('dlgAudio').textContent = p.audio || ''; $('dlgAudio').style.display = p.audio ? '' : 'none';
+    const cap = (p.caption || '').replace(/\n{3,}/g, '\n\n');
+    $('dlgCaption').innerHTML = cap.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/(#\w+)/g, '<span style="color:var(--link)">$1</span>');
+    if (p.taken_at) {
+      $('dlgAgo').textContent = agoShort(p.taken_at);
+      const d = new Date(p.taken_at * 1000), days = (Date.now() / 1000 - p.taken_at) / 86400;
+      $('dlgDate').textContent = days < 7 ? ago(p.taken_at) : months[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== new Date().getFullYear() ? ', ' + d.getFullYear() : '');
+    } else {
+      const d = new Date(Date.now() - p.daysAgo * 864e5);
+      $('dlgAgo').textContent = p.daysAgo < 7 ? p.daysAgo + 'd' : Math.round(p.daysAgo / 7) + 'w';
+      $('dlgDate').textContent = months[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== new Date().getFullYear() ? ', ' + d.getFullYear() : '');
+    }
+    renderComments(p.thread || []);
+    $('dlgLikes').textContent = fmt(p.likes) + ' likes';
+    $('likeBtn').innerHTML = svg('ic-like', 24); $('likeBtn').style.color = '';
+    $('dlgPrev').style.visibility = i > 0 ? '' : 'hidden';
+    $('dlgNext').style.visibility = i < POSTS.length - 1 ? '' : 'hidden';
+    dlg.classList.add('open'); document.body.classList.add('modal-open');
+    history.replaceState(null, '', '#' + (p.href || '').replace(/^\//, ''));
+    if (isReel) {
+      video.poster = p.file; video.src = p.video; video.muted = !soundOn; setSoundIcon();
+      video.play().catch(() => { // browser refused unmuted autoplay (no user gesture yet): fall back to muted, like Instagram
+        soundOn = false; video.muted = true; setSoundIcon(); video.play().catch(() => card.classList.add('paused'));
+      });
+    }
+  }
+  // ---- comment threads: [{user, text, ago, likes, self, avatar, replies:[...]}]
+  const DEF_AVA = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23dbdbdb'/><circle cx='16' cy='12.5' r='5.5' fill='%23fff'/><path d='M5 28.5c1.5-6.5 6-9.5 11-9.5s9.5 3 11 9.5A16 16 0 0 1 5 28.5z' fill='%23fff'/></svg>";
+  const esc = s => String(s || '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const likesTxt = n => n ? `<b>${fmt(n)} like${n === 1 ? '' : 's'}</b>` : '';
+  function cmHtml(c, small) {
+    const ava = c.self ? P.avatar : (c.avatar || DEF_AVA);
+    const vb = c.self && P.verified ? svg('ic-verified', 12).replace('class="ic"', 'class="ic vb"') : '';
+    const rs = (c.replies || []);
+    const replies = rs.length ? `<div class="replies"><button class="vr" data-n="${rs.length}">View replies (${rs.length})</button><div class="rl" hidden>${rs.map(r => cmHtml(r, true)).join('')}</div></div>` : '';
+    return `<div class="cm${small ? ' small' : ''}"><img class="cava" src="${ava}" alt=""><div class="c"><div class="t"><b>${esc(c.user)}</b>${vb}${esc(c.text)}</div><div class="meta"><span>${esc(c.ago)}</span>${likesTxt(c.likes)}<b>Reply</b></div>${replies}</div><button class="heart" title="Like">${svg('ic-like', 12)}</button></div>`;
+  }
+  function renderComments(list) {
+    const box = $('dlgComments'); box.innerHTML = list.map(c => cmHtml(c, false)).join('');
+    box.querySelectorAll('.vr').forEach(b => b.addEventListener('click', () => { const rl = b.nextElementSibling; rl.hidden = !rl.hidden; b.textContent = rl.hidden ? `View replies (${b.dataset.n})` : 'Hide replies'; }));
+    box.querySelectorAll('.heart').forEach(b => b.addEventListener('click', () => { const on = b.classList.toggle('on'); b.innerHTML = svg(on ? 'ic-like-filled' : 'ic-like', 12); }));
+  }
+  function close() { stopVideo(); dlg.classList.remove('open'); document.body.classList.remove('modal-open'); history.replaceState(null, '', location.pathname); }
+  soundBtn.addEventListener('click', e => { e.stopPropagation(); soundOn = !soundOn; video.muted = !soundOn; setSoundIcon(); if (video.paused) video.play().catch(() => {}); });
+  let lastToggle = 0;
+  $('dlgMedia').addEventListener('click', e => {
+    if (!card.classList.contains('reel') || e.target.closest('.sound')) return;
+    const now = Date.now(); if (now - lastToggle < 250) return; lastToggle = now; // guard against synthetic double clicks
+    if (video.paused) video.play().catch(() => {}); else video.pause();
+  });
+  video.addEventListener('play', () => card.classList.remove('paused'));
+  video.addEventListener('pause', () => { if (dlg.classList.contains('open') && video.src) card.classList.add('paused'); });
+  $('dlgClose').addEventListener('click', close);
+  $('dlgPrev').addEventListener('click', () => cur > 0 && open(cur - 1));
+  $('dlgNext').addEventListener('click', () => cur < POSTS.length - 1 && open(cur + 1));
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+  document.addEventListener('keydown', e => {
+    if (!dlg.classList.contains('open')) return;
+    if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft' && cur > 0) open(cur - 1); if (e.key === 'ArrowRight' && cur < POSTS.length - 1) open(cur + 1);
+  });
+  $('likeBtn').addEventListener('click', () => {
+    const liked = $('likeBtn').dataset.on === '1'; $('likeBtn').dataset.on = liked ? '0' : '1';
+    $('likeBtn').innerHTML = liked ? svg('ic-like', 24) : svg('ic-like-filled', 24); $('likeBtn').style.color = liked ? '' : '#ff3040';
+  });
+})();
+</script>
+</body>
+</html>

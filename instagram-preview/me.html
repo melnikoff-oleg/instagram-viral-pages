@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instagram</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Crect x='3' y='3' width='18' height='18' rx='5'/%3E%3Ccircle cx='12' cy='12' r='4'/%3E%3Ccircle cx='17.5' cy='6.5' r='1' fill='%23f5f5f5'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#0c1014; --bg-elev:#000; --text:#f5f5f5; --sec:#a8a8a8; --link:#708dff; --link-icon:#85a1ff;
+  --btn:#4a5df9; --btn-hover:#3b4bd6; --btn2:#25292e; --btn2-hover:#353a40; --sep:#262626; --cell:#262626;
+  --badge:#ff3040; --font:-apple-system,system-ui,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);font-size:14px;line-height:18px;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+svg.ic{display:block;flex:none}
+body.modal-open{overflow:hidden}
+
+/* ---------- left nav ---------- */
+.nav{position:fixed;left:0;top:0;bottom:0;width:72px;padding:24px 12px 24px;display:flex;flex-direction:column;z-index:20;background:var(--bg)}
+.nav .logo{margin-bottom:46px}
+.nav-item{flex:none;position:relative;width:48px;height:56px;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;transition:background .2s}
+.nav-item:hover{background:rgba(255,255,255,.1)}
+.nav-item:hover svg,.nav-item:hover img{transform:scale(1.05)}
+.nav-item svg,.nav-item img{transition:transform .2s}
+.nav-item img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+.nav .spacer{flex:1}
+.badge{position:absolute;left:24px;top:26px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--badge);color:#fff;font-size:11px;line-height:18px;font-weight:400;text-align:center;box-shadow:0 0 0 2px var(--bg);display:flex;align-items:center;justify-content:center}
+.dot{position:absolute;left:31px;top:17px;width:8px;height:8px;border-radius:50%;background:var(--badge);box-shadow:0 0 0 2px var(--bg)}
+
+/* ---------- page ---------- */
+.page{width:1119px;max-width:calc(100% - 72px);margin:0 auto;padding-top:30px}
+.header{width:680px;max-width:100%;margin:0 auto;display:flex;align-items:flex-start;padding:0}
+.avatar-wrap{position:relative;width:150px;height:150px;margin:18px 0 0;flex:none}
+.avatar-wrap .ring{position:absolute;left:-6px;top:-6px;width:162px;height:162px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#ffc900 0%,#ffc900 14.6%,#ffa200 25%,#ff8500 32.3%,#ff5c1a 40.8%,#ff2c43 50%,#fe016c 59.2%,#ed018f 67.7%,#df01ad 75%,#d400c3 80.6%,#d300c5 85.4%,#d300c5 100%)}
+.avatar-wrap .ring::after{content:"";display:block;width:100%;height:100%;border-radius:50%;background:var(--bg)}
+.avatar-wrap img{position:relative;width:150px;height:150px;border-radius:50%;object-fit:cover;display:block;cursor:pointer}
+.info{margin-left:28px;padding-top:17px;flex:1;min-width:0}
+.name-row{display:flex;align-items:center;height:30px}
+.name-row h2{margin:0;font-size:24px;font-weight:700;line-height:30px;letter-spacing:-.2px}
+.name-row .verified{margin-left:8px}
+.name-row .options{margin-left:0;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin-top:-1px}
+.name-row .options:hover{background:rgba(255,255,255,.08)}
+.note{margin-top:5px;font-size:14px}
+.counts{display:flex;gap:16px;margin-top:12px}
+.counts b{font-weight:600}
+.counts a{cursor:pointer}
+.category{margin-top:20px;color:var(--sec)}
+.bio{margin-top:5px;white-space:pre-wrap;word-break:break-word}
+.links{margin-top:7px;display:flex;align-items:center;gap:16px}
+.links .ext{display:flex;align-items:center;gap:4px;color:var(--link);font-weight:400}
+.links .ext svg{color:var(--link-icon)}
+.links .threads{display:flex;align-items:center;gap:4px;font-weight:600}
+.actions{display:flex;gap:8px;margin-top:24px;width:680px;max-width:100%;margin-left:auto;margin-right:auto}
+.btn{height:44px;border-radius:12px;font-weight:600;font-size:14px;color:#fff;display:flex;align-items:center;justify-content:center;padding:0 20px;transition:background .1s}
+.btn.primary{background:var(--btn);flex:306}
+.btn.primary:hover{background:var(--btn-hover)}
+.btn.secondary{background:var(--btn2);flex:314}
+.btn.secondary:hover{background:var(--btn2-hover)}
+.btn.icon{width:44px;flex:none;padding:0;background:var(--btn2)}
+.btn.icon:hover{background:var(--btn2-hover)}
+.header-bottom{width:680px;max-width:100%;margin:24px auto 0}
+
+/* tabs */
+.tabs{width:655px;max-width:100%;margin:44px auto 0;display:flex;justify-content:space-between;height:44px}
+.tab{width:64px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--sec);border-bottom:2px solid transparent;cursor:pointer}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--text);border-bottom-color:#f8f9f9}
+
+/* grid */
+.grid{display:flex;flex-direction:column;margin-top:.5px}
+.row{display:flex;margin-bottom:1px}
+.cell{position:relative;width:calc((100% - 3px)/4);margin-right:1px;aspect-ratio:3/4;background:var(--cell);display:block;overflow:hidden;cursor:pointer}
+.cell:nth-child(4n){margin-right:0}
+.cell img{width:100%;height:100%;object-fit:cover;display:block}
+.cell .mark{position:absolute;top:8px;right:9px;color:#fff;filter:drop-shadow(0 0 2px rgba(0,0,0,.35))}
+.cell .hover{position:absolute;inset:0;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:30px;opacity:0;transition:opacity .15s;color:#fff;font-weight:700;font-size:16px}
+.cell:hover .hover{opacity:1}
+.cell .hover span{display:flex;align-items:center;gap:7px}
+.empty{padding:60px 0 100px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.empty .circle{width:62px;height:62px;border:2px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px}
+.empty h3{font-size:30px;font-weight:800;margin:0 0 24px;line-height:36px}
+.empty p{margin:0;max-width:350px}
+
+/* footer */
+footer{padding:24px 16px 52px;font-size:12px;color:var(--sec);text-align:center}
+footer .links{display:flex;flex-wrap:wrap;justify-content:center;gap:11px 16px;margin:0}
+footer .links a:hover{text-decoration:underline}
+footer .meta{display:flex;justify-content:center;gap:16px;margin-top:24px;align-items:center}
+footer .meta .lang{display:flex;align-items:center;gap:4px}
+
+
+/* ---------- post dialog ---------- */
+.dialog{position:fixed;inset:0;background:rgba(0,0,0,.65);display:none;z-index:50;align-items:center;justify-content:center}
+.dialog.open{display:flex}
+.dialog .close{position:absolute;top:16px;right:16px;color:#fff;padding:8px}
+.dialog .arrow{position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;opacity:.9}
+.dialog .arrow:hover{opacity:1}
+.dialog .arrow.prev{left:16px}.dialog .arrow.next{right:16px}
+.post{display:flex;background:#000;max-height:calc(100vh - 48px);max-width:calc(100vw - 128px);border-radius:4px;overflow:hidden}
+.post .media{position:relative;background:#000;display:flex;align-items:center;justify-content:center;max-width:calc(100vw - 128px - 500px)}
+.post .media img{display:block;max-height:calc(100vh - 48px);max-width:100%;height:calc(100vh - 48px);object-fit:contain}
+.post .media .sound[hidden]{display:none}
+.post .media .sound{position:absolute;right:16px;bottom:16px;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;color:#fff;z-index:2}
+/* reel mode: 9:16 video, autoplay with sound */
+.post.reel{max-height:calc(100vh - 48px)}
+.post.reel .media{width:calc((100vh - 48px) * 9 / 16);height:calc(100vh - 48px);cursor:pointer}
+.post.reel .media img{display:none}
+.post .media video{display:none}
+.post.reel .media video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.post .media .playov{position:absolute;inset:0;display:none;align-items:center;justify-content:center;color:#fff;pointer-events:none}
+.post.reel.paused .media .playov{display:flex}
+.post.reel.paused .media .playov svg{filter:drop-shadow(0 2px 6px rgba(0,0,0,.5))}
+.post .side{width:500px;flex:none;background:var(--bg);display:flex;flex-direction:column;border-left:1px solid var(--sep)}
+.post .side .top{display:flex;align-items:center;padding:14px 4px 14px 16px;min-height:72px;border-bottom:1px solid var(--sep);position:relative}
+.post.reel .side .top{min-height:90px}
+.ava{position:relative;width:32px;height:32px;flex:none}
+.ava img{position:relative;z-index:1;width:32px;height:32px;border-radius:50%;object-fit:cover;display:block}
+.ava.ring::before{content:"";position:absolute;left:-3.5px;top:-3.5px;width:39px;height:39px;border-radius:50%;background:linear-gradient(45deg,#ffc900 0%,#ffc900 14.6%,#ffa200 25%,#ff8500 32.3%,#ff5c1a 40.8%,#ff2c43 50%,#fe016c 59.2%,#ed018f 67.7%,#df01ad 75%,#d400c3 80.6%,#d300c5 85.4%,#d300c5 100%)}
+.ava.ring::after{content:"";position:absolute;left:-2px;top:-2px;width:36px;height:36px;border-radius:50%;background:var(--bg)}
+.post .side .top .txt{margin-left:16px;min-width:0;flex:1;padding-right:36px}
+.post .side .top .row{display:flex;align-items:center;height:18px}
+.post .side .top .u{font-weight:600;color:#f8f9f9;display:flex;align-items:center;gap:4px}
+.post .side .top .dotsep{margin:0 6px;color:#f8f9f9}
+.post .side .top .follow{color:var(--link);font-weight:600}
+.post .side .top .sub{color:#a2aab4;font-size:14px;line-height:18px;margin-top:2px}
+.post .side .top .sub.audio{color:var(--text);font-size:12px;line-height:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.post .side .top .opt{position:absolute;right:8px;top:50%;transform:translateY(-50%)}
+.post .side .body{flex:1;overflow:auto;padding:17px 16px 16px}
+.post .side .cap{display:flex;gap:16px}
+.post .side .cap .t{white-space:pre-wrap;word-break:break-word;line-height:18px}
+.post .side .cap .t b{font-weight:500;color:#fff;margin-right:4px}
+.post .side .cap .t .vb{display:inline-block;vertical-align:-1px;margin-right:4px}
+.post .side .cap .meta{margin-top:6px;font-size:12px;line-height:16px;color:#a2aab4}
+/* comments under the caption (Instagram desktop dialog) */
+.post .side .comments{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.post .side .comments:empty{display:none}
+.post .side .cm{display:flex;gap:16px;align-items:flex-start}
+.post .side .cm .cava{width:32px;height:32px;border-radius:50%;object-fit:cover;flex:none;display:block}
+.post .side .cm.small .cava{width:24px;height:24px}
+.post .side .cm .c{flex:1;min-width:0}
+.post .side .cm .t{white-space:pre-wrap;word-break:break-word;line-height:18px}
+.post .side .cm .t b{font-weight:600;color:#f8f9f9;margin-right:4px}
+.post .side .cm .t .vb{display:inline-block;vertical-align:-1px;margin-right:4px}
+.post .side .cm .meta{margin-top:6px;font-size:12px;line-height:16px;color:#a2aab4;display:flex;gap:12px}
+.post .side .cm .meta b{font-weight:600}
+.post .side .cm .heart{color:var(--sec);padding:3px 0 0;flex:none}
+.post .side .cm .heart:hover{color:var(--text)}
+.post .side .cm .heart.on{color:#ff3040}
+.post .side .replies{margin-top:12px}
+.post .side .replies .vr{display:flex;align-items:center;gap:16px;font-size:12px;line-height:16px;font-weight:600;color:#a2aab4}
+.post .side .replies .vr::before{content:"";width:24px;height:1px;background:#a2aab4}
+.post .side .replies .rl{display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.post .side .replies .rl[hidden]{display:none}
+.post .side .bottom{border-top:1px solid var(--sep);padding:6px 16px 16px}
+.post .side .icons{display:flex;align-items:center;gap:18px;height:40px}
+.post .side .icons .save{margin-left:auto}
+.post .side .icons button:hover{color:var(--sec)}
+.post .side .likes{font-weight:600;margin-top:8px}
+.post .side .date{color:var(--sec);font-size:12px;margin-top:4px}
+.post .side .comment{display:flex;align-items:center;gap:12px;border-top:1px solid var(--sep);padding:12px 16px 12px;color:var(--sec)}
+.post .side .comment input{flex:1;background:none;border:0;color:var(--text);font:inherit;outline:none}
+.post .side .comment input::placeholder{color:var(--sec)}
+.post .side .comment .postbtn{color:var(--link);font-weight:600;opacity:.4}
+
+@media (max-width:1240px){.page{max-width:calc(100% - 72px);margin-left:72px}}
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><symbol id="ic-logo" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.982c2.937 0 3.285.011 4.445.064a6.087 6.087 0 0 1 2.042.379 3.408 3.408 0 0 1 1.265.823 3.408 3.408 0 0 1 .823 1.265 6.087 6.087 0 0 1 .379 2.042c.053 1.16.064 1.508.064 4.445s-.011 3.285-.064 4.445a6.087 6.087 0 0 1-.379 2.042 3.643 3.643 0 0 1-2.088 2.088 6.087 6.087 0 0 1-2.042.379c-1.16.053-1.508.064-4.445.064s-3.285-.011-4.445-.064a6.087 6.087 0 0 1-2.043-.379 3.408 3.408 0 0 1-1.264-.823 3.408 3.408 0 0 1-.823-1.265 6.087 6.087 0 0 1-.379-2.042c-.053-1.16-.064-1.508-.064-4.445s.011-3.285.064-4.445a6.087 6.087 0 0 1 .379-2.042 3.408 3.408 0 0 1 .823-1.265 3.408 3.408 0 0 1 1.265-.823 6.087 6.087 0 0 1 2.042-.379c1.16-.053 1.508-.064 4.445-.064M12 1c-2.987 0-3.362.013-4.535.066a8.074 8.074 0 0 0-2.67.511 5.392 5.392 0 0 0-1.949 1.27 5.392 5.392 0 0 0-1.269 1.948 8.074 8.074 0 0 0-.51 2.67C1.012 8.638 1 9.013 1 12s.013 3.362.066 4.535a8.074 8.074 0 0 0 .511 2.67 5.392 5.392 0 0 0 1.27 1.949 5.392 5.392 0 0 0 1.948 1.269 8.074 8.074 0 0 0 2.67.51C8.638 22.988 9.013 23 12 23s3.362-.013 4.535-.066a8.074 8.074 0 0 0 2.67-.511 5.625 5.625 0 0 0 3.218-3.218 8.074 8.074 0 0 0 .51-2.67C22.988 15.362 23 14.987 23 12s-.013-3.362-.066-4.535a8.074 8.074 0 0 0-.511-2.67 5.392 5.392 0 0 0-1.27-1.949 5.392 5.392 0 0 0-1.948-1.269 8.074 8.074 0 0 0-2.67-.51C15.362 1.012 14.987 1 12 1Zm0 5.351A5.649 5.649 0 1 0 17.649 12 5.649 5.649 0 0 0 12 6.351Zm0 9.316A3.667 3.667 0 1 1 15.667 12 3.667 3.667 0 0 1 12 15.667Zm5.872-10.859a1.32 1.32 0 1 0 1.32 1.32 1.32 1.32 0 0 0-1.32-1.32Z"></path></symbol><symbol id="ic-home" viewBox="0 0 24 24" fill="currentColor"><path d="m21.762 8.786-7-6.68C13.266.68 10.734.68 9.238 2.106l-7 6.681A4.017 4.017 0 0 0 1 11.68V20c0 1.654 1.346 3 3 3h5.005a1 1 0 0 0 1-1L10 15c0-1.103.897-2 2-2 1.09 0 1.98.877 2 1.962L13.999 22a1 1 0 0 0 1 1H20c1.654 0 3-1.346 3-3v-8.32a4.021 4.021 0 0 0-1.238-2.894ZM21 20a1 1 0 0 1-1 1h-4.001L16 15c0-2.206-1.794-4-4-4s-4 1.794-4 4l.005 6H4a1 1 0 0 1-1-1v-8.32c0-.543.226-1.07.62-1.447l7-6.68c.747-.714 2.013-.714 2.76 0l7 6.68c.394.376.62.904.62 1.448V20Z"></path></symbol><symbol id="ic-reels" viewBox="0 0 24 24" fill="currentColor"><path d="M22.935 7.468c-.063-1.36-.307-2.142-.512-2.67a5.341 5.341 0 0 0-1.27-1.95 5.345 5.345 0 0 0-1.95-1.27c-.53-.206-1.311-.45-2.672-.513C15.333 1.012 14.976 1 12 1s-3.333.012-4.532.065c-1.36.063-2.142.307-2.67.512-.77.298-1.371.69-1.95 1.27a5.36 5.36 0 0 0-1.27 1.95c-.206.53-.45 1.311-.513 2.672C1.012 8.667 1 9.024 1 12s.012 3.333.065 4.532c.063 1.36.307 2.142.512 2.67.297.77.69 1.372 1.27 1.95.58.581 1.181.974 1.95 1.27.53.206 1.311.45 2.672.513C8.667 22.988 9.024 23 12 23s3.333-.012 4.532-.065c1.36-.063 2.142-.307 2.67-.512a5.33 5.33 0 0 0 1.95-1.27 5.356 5.356 0 0 0 1.27-1.95c.206-.53.45-1.311.513-2.672.053-1.198.065-1.555.065-4.531s-.012-3.333-.065-4.532Zm-1.998 8.972c-.05 1.07-.228 1.652-.38 2.04-.197.51-.434.874-.82 1.258a3.362 3.362 0 0 1-1.258.82c-.387.151-.97.33-2.038.379-1.162.052-1.51.063-4.441.063s-3.28-.01-4.44-.063c-1.07-.05-1.652-.228-2.04-.38a3.354 3.354 0 0 1-1.258-.82 3.362 3.362 0 0 1-.82-1.258c-.151-.387-.33-.97-.379-2.038C3.011 15.28 3 14.931 3 12s.01-3.28.063-4.44c.05-1.07.228-1.652.38-2.04.197-.51.434-.875.82-1.26a3.372 3.372 0 0 1 1.258-.819c.387-.15.97-.329 2.038-.378C8.72 3.011 9.069 3 12 3s3.28.01 4.44.063c1.07.05 1.652.228 2.04.38.51.197.874.433 1.258.82.385.382.622.747.82 1.258.151.387.33.97.379 2.038C20.989 8.72 21 9.069 21 12s-.01 3.28-.063 4.44Zm-4.584-6.828-5.25-3a2.725 2.725 0 0 0-2.745.01A2.722 2.722 0 0 0 6.988 9v6c0 .992.512 1.88 1.37 2.379.432.25.906.376 1.38.376.468 0 .937-.123 1.365-.367l5.25-3c.868-.496 1.385-1.389 1.385-2.388s-.517-1.892-1.385-2.388Zm-.993 3.04-5.25 3a.74.74 0 0 1-.748-.003.74.74 0 0 1-.374-.649V9a.74.74 0 0 1 .374-.65.737.737 0 0 1 .748-.002l5.25 3c.341.196.378.521.378.652s-.037.456-.378.651Z"></path></symbol><symbol id="ic-messages" viewBox="0 0 24 24" fill="currentColor"><path d="M13.973 20.046 21.77 6.928C22.8 5.195 21.55 3 19.535 3H4.466C2.138 3 .984 5.825 2.646 7.456l4.842 4.752 1.723 7.121c.548 2.266 3.571 2.721 4.762.717Z" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="7.488" x2="15.515" y1="12.208" y2="7.641"></line></symbol><symbol id="ic-search" viewBox="0 0 24 24" fill="currentColor"><path d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="16.511" x2="22" y1="16.511" y2="22"></line></symbol><symbol id="ic-heart" viewBox="0 0 24 24" fill="currentColor"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"></path></symbol><symbol id="ic-plus" viewBox="0 0 24 24" fill="currentColor"><path d="M21 11h-8V3a1 1 0 1 0-2 0v8H3a1 1 0 1 0 0 2h8v8a1 1 0 1 0 2 0v-8h8a1 1 0 1 0 0-2Z"></path></symbol><symbol id="ic-dash" viewBox="0 0 24 24" fill="currentColor"><path d="M8 12a1 1 0 0 0-1 1v3a1 1 0 1 0 2 0v-3a1 1 0 0 0-1-1Zm8-3a1 1 0 0 0-1 1v6a1 1 0 1 0 2 0v-6a1 1 0 0 0-1-1Zm-4-2a1 1 0 0 0-1 1v8a1 1 0 1 0 2 0V8a1 1 0 0 0-1-1Z"></path><path d="M18.44 1H5.567a4.565 4.565 0 0 0-4.56 4.56v12.873a4.565 4.565 0 0 0 4.56 4.56H18.44a4.565 4.565 0 0 0 4.56-4.56V5.56A4.565 4.565 0 0 0 18.44 1ZM21 18.433a2.563 2.563 0 0 1-2.56 2.56H5.567a2.563 2.563 0 0 1-2.56-2.56V5.56A2.563 2.563 0 0 1 5.568 3H18.44A2.563 2.563 0 0 1 21 5.56v12.873Z"></path></symbol><symbol id="ic-menu" viewBox="0 0 24 24" fill="currentColor"><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="3" x2="21" y1="4" y2="4"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="3" x2="21" y1="12" y2="12"></line><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="3" x2="21" y1="20" y2="20"></line></symbol><symbol id="ic-meta" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 11h5c1.379 0 2.5-1.122 2.5-2.5v-5C17 2.122 15.879 1 14.5 1h-5A2.503 2.503 0 0 0 7 3.5v5C7 9.878 8.12 11 9.5 11ZM9 3.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-5ZM8.499 13h-5a2.503 2.503 0 0 0-2.5 2.5v5c0 1.378 1.12 2.5 2.5 2.5h5c1.379 0 2.5-1.122 2.5-2.5v-5c0-1.378-1.121-2.5-2.5-2.5Zm.5 7.5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5Zm11.5-7.5h-5a2.503 2.503 0 0 0-2.5 2.5v5c0 1.378 1.12 2.5 2.5 2.5h5c1.379 0 2.5-1.122 2.5-2.5v-5c0-1.378-1.121-2.5-2.5-2.5Zm.5 7.5a.5.5 0 0 1-.5.5h-5a.5.5 0 0 1-.5-.5v-5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 .5.5v5Z"></path></symbol><symbol id="ic-verified" viewBox="0 0 40 40" fill="rgb(0, 149, 246)"><path d="M19.998 3.094 14.638 0l-2.972 5.15H5.432v6.354L0 14.64 3.094 20 0 25.359l5.432 3.137v5.905h5.975L14.638 40l5.36-3.094L25.358 40l3.232-5.6h6.162v-6.01L40 25.359 36.905 20 40 14.641l-5.248-3.03v-6.46h-6.419L25.358 0l-5.36 3.094Zm7.415 11.225 2.254 2.287-11.43 11.5-6.835-6.93 2.244-2.258 4.587 4.581 9.18-9.18Z" fill-rule="evenodd"></path></symbol><symbol id="ic-options" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="1.5"></circle><circle cx="6" cy="12" r="1.5"></circle><circle cx="18" cy="12" r="1.5"></circle></symbol><symbol id="ic-link" viewBox="0 0 24 24" fill="currentColor"><path d="m9.726 5.123 1.228-1.228a6.47 6.47 0 0 1 9.15 9.152l-1.227 1.227m-4.603 4.603-1.228 1.228a6.47 6.47 0 0 1-9.15-9.152l1.227-1.227" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><line fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" x1="8.471" x2="15.529" y1="15.529" y2="8.471"></line></symbol><symbol id="ic-threads" viewBox="0 0 976.98 1082" fill="currentColor"><path d="M770.347,500.347c-1.355-156.85-86.386-251.367-230.025-251.367-95.872,0-176.499,43.362-218.846,112.472l92.823,64.705c24.053-37.942,57.252-69.448,118.231-69.448,68.77,0,104.341,38.281,114.504,109.423-33.2-5.081-66.399-7.791-100.615-7.791-185.646,0-273.049,84.015-273.049,195.131,0,113.149,87.403,179.548,216.136,179.548,141.267,0,225.621-95.194,260.176-213.086,35.91,16.261,60.64,54.203,60.64,111.116,0,152.447-175.822,235.446-324.881,235.446-219.862,0-363.501-144.316-363.501-379.084,0-287.616,190.05-471.907,445.483-471.907,171.418,0,256.11,75.207,313.701,176.16l94.856-66.399C913.308,94.501,773.396,1,563.358,1,228.653,1,.999,238.478.999,583.008c0,315.057,222.911,497.992,488.507,497.992,219.523,0,441.418-128.055,441.418-347.24,0-114.504-65.721-190.389-160.577-233.413ZM485.441,718.854c-48.444,0-91.129-23.036-91.129-65.383,0-66.738,81.983-87.064,162.271-87.064,30.489,0,60.301,2.032,86.725,7.792-18.971,86.725-75.207,144.655-157.867,144.655Z"></path></symbol><symbol id="ic-similar" viewBox="0 0 24 24" fill="currentColor"><path d="M4 14V8a1 1 0 0 1 2 0v6a1 1 0 1 1-2 0Z" fill="currentColor"></path><path d="M8 10a1 1 0 1 1 0 2H2a1 1 0 1 1 0-2h6Zm9.5-2.5a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Zm2 0a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm-4.501 5.667c3.147 0 5.945 1.495 7.61 3.801.889 1.231.185 2.837-1.18 3.215-1.34.372-3.549.817-6.429.817-2.878 0-5.091-.447-6.44-.822-1.37-.38-2.048-1.995-1.17-3.212 1.666-2.305 4.463-3.8 7.609-3.8Zm0 2c-2.51 0-4.702 1.191-5.987 2.971-.01.015-.012.024-.012.024 0 .003 0 .01.004.02s.012.023.024.035c.012.01.032.025.068.035C10.297 18.585 12.33 19 15 19c2.674 0 4.7-.413 5.895-.744a.182.182 0 0 0 .076-.038.096.096 0 0 0 .025-.038.044.044 0 0 0 .004-.017s0-.008-.012-.024c-1.285-1.78-3.478-2.972-5.989-2.972Z" fill="currentColor"></path></symbol><symbol id="ic-tab-posts" viewBox="0 0 24 24" fill="currentColor"><rect height="6" rx="1" ry="1" width="4.667" x="3" y="1"></rect><rect height="6" rx="1" ry="1" width="4.667" x="16.333" y="1"></rect><rect height="6" rx="1" ry="1" width="4.667" x="9.667" y="1"></rect><rect height="6" rx="1" ry="1" width="4.667" x="3" y="9"></rect><rect height="6" rx="1" ry="1" width="4.667" x="16.333" y="9"></rect><rect height="6" rx="1" ry="1" width="4.667" x="9.667" y="9"></rect><rect height="6" rx="1" ry="1" width="4.667" x="3" y="17"></rect><rect height="6" rx="1" ry="1" width="4.667" x="16.333" y="17"></rect><rect height="6" rx="1" ry="1" width="4.667" x="9.667" y="17"></rect></symbol><symbol id="ic-tab-reposts" viewBox="0 0 24 24" fill="currentColor"><path d="M19.998 9.497a1 1 0 0 0-1 1v4.228a3.274 3.274 0 0 1-3.27 3.27h-5.313l1.791-1.787a1 1 0 0 0-1.412-1.416L7.29 18.287a1.004 1.004 0 0 0-.294.707v.001c0 .023.012.042.013.065a.923.923 0 0 0 .281.643l3.502 3.504a1 1 0 0 0 1.414-1.414l-1.797-1.798h5.318a5.276 5.276 0 0 0 5.27-5.27v-4.228a1 1 0 0 0-1-1zm-6.41-3.496-1.795 1.795a1 1 0 1 0 1.414 1.414l3.5-3.5a1.003 1.003 0 0 0 0-1.417l-3.5-3.5a1 1 0 0 0-1.414 1.414l1.794 1.794H8.27A5.277 5.277 0 0 0 3 9.271V13.5a1 1 0 0 0 2 0V9.271a3.275 3.275 0 0 1 3.271-3.27z"></path></symbol><symbol id="ic-tab-tagged" viewBox="0 0 24 24" fill="currentColor"><path d="M21 7.48a2 2 0 0 0-2-2h-3.046a2.002 2.002 0 0 1-1.506-.683l-1.695-1.939a1 1 0 0 0-1.506 0L9.552 4.797c-.38.434-.93.682-1.506.682H5a2 2 0 0 0-2 2V19l.01.206A2 2 0 0 0 5 21h14a2 2 0 0 0 2-2V7.48ZM23 19a4 4 0 0 1-4 4H5a4 4 0 0 1-3.995-3.794L1 19V7.48a4 4 0 0 1 4-4h3.046l1.696-1.94a3 3 0 0 1 4.516 0l1.696 1.94H19a4 4 0 0 1 4 4V19Z" fill="currentColor"></path><path d="M14.5 10.419a2.5 2.5 0 1 0-5 0 2.5 2.5 0 0 0 5 0Zm2 0a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM12 16.003c3.511 0 6.555 1.99 8.13 4.906a1 1 0 0 1-1.76.95c-1.248-2.31-3.64-3.857-6.37-3.857S6.878 19.55 5.63 21.86a1 1 0 0 1-1.76-.951c1.575-2.915 4.618-4.906 8.13-4.906Z" fill="currentColor"></path></symbol><symbol id="ic-pin" viewBox="0 0 24 24" fill="currentColor"><path d="m22.707 7.583-6.29-6.29a1 1 0 0 0-1.414 0 5.183 5.183 0 0 0-1.543 3.593L8.172 8.79a5.161 5.161 0 0 0-4.768 1.42 1 1 0 0 0 0 1.414l3.779 3.778-5.89 5.89a1 1 0 1 0 1.414 1.414l5.89-5.89 3.778 3.779a1 1 0 0 0 1.414 0 5.174 5.174 0 0 0 1.42-4.769l3.905-5.287a5.183 5.183 0 0 0 3.593-1.543 1 1 0 0 0 0-1.414Z"></path></symbol><symbol id="ic-clip" viewBox="0 0 24 24" fill="currentColor"><path d="M22.942 7.464c-.062-1.36-.306-2.143-.511-2.671a5.366 5.366 0 0 0-1.272-1.952 5.364 5.364 0 0 0-1.951-1.27c-.53-.207-1.312-.45-2.673-.513-1.2-.054-1.557-.066-4.535-.066s-3.336.012-4.536.066c-1.36.062-2.143.306-2.672.511-.769.3-1.371.692-1.951 1.272s-.973 1.182-1.27 1.951c-.207.53-.45 1.312-.513 2.673C1.004 8.665.992 9.022.992 12s.012 3.336.066 4.536c.062 1.36.306 2.143.511 2.671.298.77.69 1.373 1.272 1.952.58.581 1.182.974 1.951 1.27.53.207 1.311.45 2.673.513 1.199.054 1.557.066 4.535.066s3.336-.012 4.536-.066c1.36-.062 2.143-.306 2.671-.511a5.368 5.368 0 0 0 1.953-1.273c.58-.58.972-1.181 1.27-1.95.206-.53.45-1.312.512-2.673.054-1.2.066-1.557.066-4.535s-.012-3.336-.066-4.536Zm-7.085 6.055-5.25 3c-1.167.667-2.619-.175-2.619-1.519V9c0-1.344 1.452-2.186 2.619-1.52l5.25 3c1.175.672 1.175 2.368 0 3.04Z"></path></symbol><symbol id="ic-carousel" viewBox="0 0 48 48" fill="currentColor"><path d="M34.8 29.7V11c0-2.9-2.3-5.2-5.2-5.2H11c-2.9 0-5.2 2.3-5.2 5.2v18.7c0 2.9 2.3 5.2 5.2 5.2h18.7c2.8-.1 5.1-2.4 5.1-5.2zM39.2 15v16.1c0 4.5-3.7 8.2-8.2 8.2H14.9c-.6 0-.9.7-.5 1.1 1 1.1 2.4 1.8 4.1 1.8h13.4c5.7 0 10.3-4.6 10.3-10.3V18.5c0-1.6-.7-3.1-1.8-4.1-.5-.4-1.2 0-1.2.6z"></path></symbol><symbol id="ic-chevron-down" viewBox="0 0 24 24" fill="currentColor"><path d="M21 17.502a.997.997 0 0 1-.707-.293L12 8.913l-8.293 8.296a1 1 0 1 1-1.414-1.414l9-9.004a1.03 1.03 0 0 1 1.414 0l9 9.004A1 1 0 0 1 21 17.502Z"></path></symbol><symbol id="ic-like" viewBox="0 0 24 24" fill="currentColor"><path d="M16.792 3.904A4.989 4.989 0 0 1 21.5 9.122c0 3.072-2.652 4.959-5.197 7.222-2.512 2.243-3.865 3.469-4.303 3.752-.477-.309-2.143-1.823-4.303-3.752C5.141 14.072 2.5 12.167 2.5 9.122a4.989 4.989 0 0 1 4.708-5.218 4.21 4.21 0 0 1 3.675 1.941c.84 1.175.98 1.763 1.12 1.763s.278-.588 1.11-1.766a4.17 4.17 0 0 1 3.679-1.938m0-2a6.04 6.04 0 0 0-4.797 2.127 6.052 6.052 0 0 0-4.787-2.127A6.985 6.985 0 0 0 .5 9.122c0 3.61 2.55 5.827 5.015 7.97.283.246.569.494.853.747l1.027.918a44.998 44.998 0 0 0 3.518 3.018 2 2 0 0 0 2.174 0 45.263 45.263 0 0 0 3.626-3.115l.922-.824c.293-.26.59-.519.885-.774 2.334-2.025 4.98-4.32 4.98-7.94a6.985 6.985 0 0 0-6.708-7.218Z"/></symbol><symbol id="ic-like-filled" viewBox="0 0 48 48" fill="currentColor"><path d="M34.6 3.1c-4.5 0-7.9 1.8-10.6 5.6-2.7-3.7-6.1-5.5-10.6-5.5C6 3.1 0 9.6 0 17.6c0 7.3 5.4 12 10.6 16.5.6.5 1.3 1.1 1.9 1.7l2.3 2c4.4 3.9 6.6 5.9 7.6 6.5.5.3 1.1.5 1.6.5s1.1-.2 1.6-.5c1-.6 2.8-2.2 7.8-6.8l2-1.8c.7-.6 1.3-1.2 2-1.7C42.7 29.6 48 25 48 17.6c0-8-6-14.5-13.4-14.5z"/></symbol><symbol id="ic-comment" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"/></symbol><symbol id="ic-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><line x1="22" x2="9.218" y1="3" y2="10.083"/><polygon points="11.698 20.334 22 3.001 2 3.001 9.218 10.084 11.698 20.334"/></symbol><symbol id="ic-save" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polygon points="20 21 12 13.44 4 21 4 3 20 3 20 21"/></symbol><symbol id="ic-emoji" viewBox="0 0 24 24" fill="currentColor"><path d="M15.83 10.997a1.167 1.167 0 1 0 1.167 1.167 1.167 1.167 0 0 0-1.167-1.167Zm-6.5 1.167a1.167 1.167 0 1 0-1.166 1.167 1.167 1.167 0 0 0 1.166-1.167Zm5.163 3.24a3.406 3.406 0 0 1-4.982 0 1 1 0 1 0-1.46 1.368 5.4 5.4 0 0 0 7.902 0 1 1 0 0 0-1.46-1.368ZM12 .503a11.5 11.5 0 1 0 11.5 11.5A11.513 11.513 0 0 0 12 .503Zm0 21a9.5 9.5 0 1 1 9.5-9.5 9.51 9.51 0 0 1-9.5 9.5Z"/></symbol><symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20.643 3.357 12 12 3.353 20.647"/><line x1="20.649" x2="3.354" y1="20.649" y2="3.354"/></symbol><symbol id="ic-chevron-left" viewBox="0 0 24 24" fill="currentColor"><path d="M16.707 20.293 8.414 12l8.293-8.293a1 1 0 1 0-1.414-1.414l-9 9a1 1 0 0 0 0 1.414l9 9a1 1 0 0 0 1.414-1.414Z"/></symbol><symbol id="ic-chevron-right" viewBox="0 0 24 24" fill="currentColor"><path d="M7.293 3.707 15.586 12l-8.293 8.293a1 1 0 1 0 1.414 1.414l9-9a1 1 0 0 0 0-1.414l-9-9a1 1 0 0 0-1.414 1.414Z"/></symbol><symbol id="ic-audio-off" viewBox="0 0 48 48" fill="currentColor"><path d="M1.5 13.3c-.8 0-1.5.7-1.5 1.5v18.4c0 .8.7 1.5 1.5 1.5h8.7l12.9 12.9c.9.9 2.5.3 2.5-1v-9.8c0-.4-.2-.8-.4-1.1l-22-22c-.3-.3-.7-.4-1.1-.4h-.6zm46.8 31.4-5.5-5.5C44.9 36.6 48 31.4 48 24c0-11.4-7.2-17.4-7.2-17.4-.6-.6-1.6-.6-2.2 0L37.2 8c-.6.6-.6 1.6 0 2.2 0 0 5.7 5 5.7 13.8 0 5.4-2.1 9.3-3.8 11.6L35.5 32c1.1-1.7 2.3-4.4 2.3-8 0-6.8-4.1-10.3-4.1-10.3-.6-.6-1.6-.6-2.2 0l-1.4 1.4c-.6.6-.6 1.6 0 2.2 0 0 2.6 2 2.6 6.7 0 1.8-.4 3.2-.9 4.3L25.6 22V1.4c0-1.3-1.6-1.9-2.5-1L13.5 10 3.3-.2c-.6-.6-1.6-.6-2.2 0L-.2 1.1c-.6.6-.6 1.6 0 2.2L45 48.3c.6.6 1.6.6 2.2 0l1.1-1.1c.6-.6.6-1.7 0-2.5z"/></symbol><symbol id="ic-audio-on" viewBox="0 0 24 24" fill="currentColor"><path d="M16.636 7.028a1.5 1.5 0 1 0-2.395 1.807 5.365 5.365 0 0 1 1.103 3.17 5.378 5.378 0 0 1-1.105 3.176 1.5 1.5 0 1 0 2.395 1.806 8.396 8.396 0 0 0 1.71-4.981 8.39 8.39 0 0 0-1.708-4.978Zm3.73-2.332A1.5 1.5 0 1 0 18.04 6.59 8.823 8.823 0 0 1 20 12.007a8.798 8.798 0 0 1-1.96 5.415 1.5 1.5 0 0 0 2.326 1.894 11.672 11.672 0 0 0 2.635-7.31 11.682 11.682 0 0 0-2.635-7.31Zm-8.963-3.613a1.001 1.001 0 0 0-1.082.187L5.265 6H2a1 1 0 0 0-1 1v10.003a1 1 0 0 0 1 1h3.265l5.01 4.682.02.021a1 1 0 0 0 1.704-.814L12.005 2a1 1 0 0 0-.602-.917Z"/></symbol><symbol id="ic-play" viewBox="0 0 24 24" fill="currentColor"><path d="M5.888 22.5a3.46 3.46 0 0 1-1.721-.46l-.003-.002a3.451 3.451 0 0 1-1.72-2.982V4.943a3.445 3.445 0 0 1 5.163-2.987l12.226 7.059a3.444 3.444 0 0 1-.001 5.967l-12.22 7.056a3.462 3.462 0 0 1-1.724.462Z"/></symbol></svg>
+
+<nav class="nav" aria-label="Primary">
+  <a class="nav-item logo" href="#" title="Instagram"><svg class="ic" width="24" height="24"><use href="#ic-logo"/></svg></a>
+  <a class="nav-item" href="#" title="Home"><svg class="ic" width="24" height="24"><use href="#ic-home"/></svg></a>
+  <a class="nav-item" href="#" title="Reels"><svg class="ic" width="24" height="24"><use href="#ic-reels"/></svg></a>
+  <a class="nav-item" href="#" title="Messages"><svg class="ic" width="24" height="24"><use href="#ic-messages"/></svg><span class="badge" id="msgBadge">6</span></a>
+  <a class="nav-item" href="#" title="Search"><svg class="ic" width="24" height="24"><use href="#ic-search"/></svg></a>
+  <a class="nav-item" href="#" title="Notifications"><svg class="ic" width="24" height="24"><use href="#ic-heart"/></svg><span class="dot"></span></a>
+  <a class="nav-item" href="#" title="New post"><svg class="ic" width="24" height="24"><use href="#ic-plus"/></svg></a>
+  <a class="nav-item" href="#" title="Professional dashboard"><svg class="ic" width="24" height="24"><use href="#ic-dash"/></svg></a>
+  <a class="nav-item" href="#" title="Profile"><img id="viewerAvatar" alt="Your profile picture"></a>
+  <div class="spacer"></div>
+  <a class="nav-item" href="#" title="Settings"><svg class="ic" width="24" height="24"><use href="#ic-menu"/></svg></a>
+  <a class="nav-item" href="#" title="Also from Meta"><svg class="ic" width="24" height="24"><use href="#ic-meta"/></svg></a>
+</nav>
+
+<main class="page">
+  <header class="header">
+    <div class="avatar-wrap">
+      <div class="ring" id="ring"></div>
+      <img id="avatar" alt="profile picture">
+    </div>
+    <section class="info">
+      <div class="name-row">
+        <h2 id="username">iamnotsrc</h2>
+        <svg class="ic verified" id="verified" width="18" height="18"><use href="#ic-verified"/></svg>
+        <button class="options" title="Options"><svg class="ic" width="16" height="16"><use href="#ic-options"/></svg></button>
+      </div>
+      <div class="note" id="note"></div>
+      <ul class="counts" style="list-style:none;margin:12px 0 0;padding:0">
+        <li><b id="cPosts"></b> posts</li>
+        <li><a href="#"><b id="cFollowers"></b> followers</a></li>
+        <li><a href="#"><b id="cFollowing"></b> following</a></li>
+      </ul>
+      <div class="category" id="category"></div>
+      <div class="bio" id="bio"></div>
+      <div class="links">
+        <a class="ext" id="extLink" href="#" target="_blank" rel="noopener"><svg class="ic" width="16" height="16"><use href="#ic-link"/></svg><span id="extLinkText"></span></a>
+        <a class="threads" id="threads" href="#" target="_blank" rel="noopener"><svg class="ic" width="16" height="16"><use href="#ic-threads"/></svg><span id="threadsText"></span></a>
+      </div>
+    </section>
+  </header>
+  <div class="actions header-bottom">
+    <button class="btn primary" id="followBtn">Follow</button>
+    <button class="btn secondary">Message</button>
+    <button class="btn icon" title="Similar accounts"><svg class="ic" width="16" height="16"><use href="#ic-similar"/></svg></button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <a class="tab active" data-tab="posts" href="#" role="tab" title="Posts"><svg class="ic" width="24" height="24"><use href="#ic-tab-posts"/></svg></a>
+    <a class="tab" data-tab="reels" href="#" role="tab" title="Reels"><svg class="ic" width="24" height="24"><use href="#ic-reels"/></svg></a>
+    <a class="tab" data-tab="reposts" href="#" role="tab" title="Reposts"><svg class="ic" width="24" height="24"><use href="#ic-tab-reposts"/></svg></a>
+    <a class="tab" data-tab="tagged" href="#" role="tab" title="Tagged"><svg class="ic" width="24" height="24"><use href="#ic-tab-tagged"/></svg></a>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <div class="links">
+      <a href="#">Meta</a><a href="#">About</a><a href="#">Blog</a><a href="#">Jobs</a><a href="#">Help</a><a href="#">API</a><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Locations</a><a href="#">Popular</a><a href="#">Instagram Lite</a><a href="#">Meta AI</a><a href="#">Muse</a><a href="#">Threads</a><a href="#">Contact Uploading &amp; Non-Users</a><a href="#">Meta Verified</a>
+    </div>
+    <div class="meta">
+      <span class="lang">English <svg class="ic" width="12" height="12" style="transform:rotate(180deg)"><use href="#ic-chevron-down"/></svg></span>
+      <span>© 2026 Instagram from Meta</span>
+      
+    </div>
+  </footer>
+</main>
+
+<div class="dialog" id="dialog" aria-modal="true" role="dialog">
+  <button class="close" id="dlgClose" title="Close"><svg class="ic" width="18" height="18"><use href="#ic-close"/></svg></button>
+  <button class="arrow prev" id="dlgPrev"><svg class="ic" width="16" height="16"><use href="#ic-chevron-left"/></svg></button>
+  <button class="arrow next" id="dlgNext"><svg class="ic" width="16" height="16"><use href="#ic-chevron-right"/></svg></button>
+  <article class="post" id="postCard">
+    <div class="media" id="dlgMedia"><img id="dlgImg" alt=""><video id="dlgVideo" playsinline loop preload="auto"></video><span class="playov"><svg class="ic" width="72" height="72"><use href="#ic-play"/></svg></span><button class="sound" id="dlgSound" hidden title="Toggle audio"><svg class="ic" width="12" height="12"><use href="#ic-audio-on"/></svg></button></div>
+    <div class="side">
+      <div class="top">
+        <div class="ava ring"><img id="dlgAvatar" alt=""></div>
+        <div class="txt">
+          <div class="row"><span class="u"><span id="dlgUser"></span><svg class="ic vb" width="12" height="12"><use href="#ic-verified"/></svg></span>
+          <span class="dotsep">•</span><button class="follow">Follow</button></div>
+          <div class="sub" id="dlgLabel"></div>
+          <div class="sub audio" id="dlgAudio"></div>
+        </div>
+        <button class="opt" title="More options"><svg class="ic" width="24" height="24"><use href="#ic-options"/></svg></button>
+      </div>
+      <div class="body">
+        <div class="cap">
+          <div class="ava ring"><img id="dlgAvatar2" alt=""></div>
+          <div><div class="t"><b id="dlgUser2"></b><svg class="ic vb" width="12" height="12"><use href="#ic-verified"/></svg><span id="dlgCaption"></span></div><div class="meta" id="dlgAgo"></div></div>
+        </div>
+        <div class="comments" id="dlgComments"></div>
+      </div>
+      <div class="bottom">
+        <div class="icons">
+          <button id="likeBtn" title="Like"><svg class="ic" width="24" height="24"><use href="#ic-like"/></svg></button>
+          <button title="Comment"><svg class="ic" width="24" height="24"><use href="#ic-comment"/></svg></button>
+          <button class="repost" title="Repost"><svg class="ic" width="24" height="24"><use href="#ic-tab-reposts"/></svg></button>
+          <button title="Share"><svg class="ic" width="24" height="24"><use href="#ic-share"/></svg></button>
+          <button class="save" title="Save"><svg class="ic" width="24" height="24"><use href="#ic-save"/></svg></button>
+        </div>
+        <div class="likes" id="dlgLikes"></div>
+        <div class="date" id="dlgDate"></div>
+      </div>
+      <div class="comment">
+        <svg class="ic" width="24" height="24"><use href="#ic-emoji"/></svg>
+        <input placeholder="Add a comment…">
+        <span class="postbtn">Post</span>
+      </div>
+    </div>
+  </article>
+</div>
+
+<script src="my-account.js"></script>
+<script>
+(function(){
+  const P = window.IG_PROFILE, POSTS = window.IG_POSTS;
+  const $ = id => document.getElementById(id);
+  // local files keep their names when swapped (profile.jpg), so bust the browser cache on every load
+  const V = '?v=' + Date.now(), bust = u => u ? u + V : u;
+  P.avatar = bust(P.avatar); P.viewerAvatar = bust(P.viewerAvatar);
+  // ---- profile header
+  document.title = `${P.fullName || P.username} (@${P.username}) • Instagram photos and videos`;
+  $('avatar').src = P.avatar; $('avatar').alt = `${P.username}'s profile picture`;
+  $('ring').style.display = P.storyRing ? '' : 'none';
+  $('username').textContent = P.username;
+  $('verified').style.display = P.verified ? '' : 'none';
+  $('note').textContent = P.note || ''; $('note').style.display = P.note ? '' : 'none';
+  $('cPosts').textContent = P.posts; $('cFollowers').textContent = P.followers; $('cFollowing').textContent = P.following;
+  $('category').textContent = P.category || ''; $('category').style.display = P.category ? '' : 'none';
+  $('bio').textContent = P.bio || '';
+  if (P.link) { $('extLink').href = P.link.href; $('extLinkText').textContent = P.link.text; } else $('extLink').style.display = 'none';
+  if (P.threads) { $('threads').href = 'https://www.threads.com/@' + P.threads; $('threadsText').textContent = P.threads; } else $('threads').style.display = 'none';
+  $('viewerAvatar').src = P.viewerAvatar || P.avatar;
+
+  // follow toggle
+  const fb = $('followBtn');
+  fb.addEventListener('click', () => {
+    const on = fb.classList.toggle('secondary'); fb.classList.toggle('primary', !on);
+    fb.innerHTML = on ? 'Following <svg class="ic" width="12" height="12" style="margin-left:6px"><use href="#ic-chevron-down"/></svg>' : 'Follow';
+  });
+
+  // ---- deterministic fake engagement numbers so the hover overlay looks real
+  const h = s => { let x = 0; for (const c of s) x = (x * 31 + c.charCodeAt(0)) >>> 0; return x; };
+  const fmt = n => n >= 1e6 ? (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M' : n >= 1e4 ? Math.round(n/1e3) + 'K' : n >= 1e3 ? (n/1e3).toFixed(1).replace(/\.0$/,'') + 'K' : String(n);
+  POSTS.forEach((p, i) => { const x = h(p.href || p.file); p.likes = p.likes ?? 1800 + (x % 23000); p.comments = p.comments ?? 12 + (x % 190); p.daysAgo = p.daysAgo ?? (i * 3 + 1); });
+
+  // ---- grid
+  const grid = $('grid');
+  const svg = (id, s) => `<svg class="ic" width="${s}" height="${s}"><use href="#${id}"/></svg>`;
+  function render(tab) {
+    grid.innerHTML = '';
+    let list = POSTS;
+    if (tab === 'reels') list = POSTS.filter(p => p.kind === 'reel');
+    if (tab === 'reposts' || tab === 'tagged') {
+      grid.innerHTML = tab === 'tagged'
+        ? `<div class="empty"><div class="circle">${svg('ic-tab-tagged', 32)}</div><h3>Photos of you</h3><p>When people tag you in photos, they'll appear here.</p></div>`
+        : `<div class="empty"><div class="circle">${svg('ic-tab-reposts', 32)}</div><h3>No reposts yet</h3><p>Reposted reels and posts will show up here.</p></div>`;
+      return;
+    }
+    for (let r = 0; r < list.length; r += 4) {
+      const row = document.createElement('div'); row.className = 'row';
+      list.slice(r, r + 4).forEach(p => {
+        const a = document.createElement('a'); a.className = 'cell'; a.href = p.href || '#'; a.dataset.idx = POSTS.indexOf(p);
+        const mark = p.pinned ? svg('ic-pin', 20) : p.kind === 'reel' ? svg('ic-clip', 20) : p.kind === 'carousel' ? svg('ic-carousel', 20) : '';
+        a.innerHTML = `<img src="${p.file}" alt="" loading="lazy"><span class="mark">${mark}</span>
+          <div class="hover"><span>${svg('ic-like-filled', 19)} ${fmt(p.likes)}</span><span>${svg('ic-comment', 20)} ${fmt(p.comments)}</span></div>`;
+        a.addEventListener('click', e => { e.preventDefault(); open(+a.dataset.idx); });
+        row.appendChild(a);
+      });
+      grid.appendChild(row);
+    }
+  }
+  document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', e => {
+    e.preventDefault(); document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); render(t.dataset.tab);
+  }));
+  render('posts');
+  if (location.hash.length > 1) { const k = POSTS.findIndex(p => (p.href||'').replace(/^\//,'') === location.hash.slice(1)); if (k >= 0) setTimeout(() => open(k), 0); }
+
+  // ---- post dialog
+  const dlg = $('dialog'); let cur = -1;
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const card = $('postCard'), video = $('dlgVideo'), soundBtn = $('dlgSound');
+  let soundOn = true; // reels play with sound by default; the toggle is remembered while the page is open
+  const setSoundIcon = () => soundBtn.innerHTML = svg(soundOn ? 'ic-audio-on' : 'ic-audio-off', 12);
+  const ago = s => { const m = Math.max(1, Math.round((Date.now() / 1000 - s) / 60)); if (m < 60) return m + ' minutes ago'; const h = Math.round(m / 60); if (h < 24) return h + ' hours ago'; const d = Math.round(h / 24); if (d < 7) return d + ' days ago'; const w = Math.round(d / 7); return w + ' weeks ago'; };
+  const agoShort = s => { const h = Math.max(1, Math.round((Date.now() / 1000 - s) / 3600)); if (h < 24) return h + 'h'; const d = Math.round(h / 24); if (d < 7) return d + 'd'; return Math.round(d / 7) + 'w'; };
+  function stopVideo() { video.pause(); video.removeAttribute('src'); video.load(); card.classList.remove('paused'); }
+  function open(i) {
+    cur = i; const p = POSTS[i];
+    const isReel = p.kind === 'reel' && p.video;
+    stopVideo();
+    card.classList.toggle('reel', isReel);
+    $('dlgImg').src = p.file;
+    soundBtn.hidden = !isReel;
+    $('dlgAvatar').src = P.avatar; $('dlgAvatar2').src = P.avatar;
+    $('dlgUser').textContent = P.username; $('dlgUser2').textContent = P.username;
+    document.querySelectorAll('.post .vb').forEach(e => e.style.display = P.verified ? '' : 'none');
+    $('dlgLabel').textContent = p.label || ''; $('dlgLabel').style.display = p.label ? '' : 'none';
+    $('dlgAudio').textContent = p.audio || ''; $('dlgAudio').style.display = p.audio ? '' : 'none';
+    const cap = (p.caption || '').replace(/\n{3,}/g, '\n\n');
+    $('dlgCaption').innerHTML = cap.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])).replace(/(#\w+)/g, '<span style="color:var(--link)">$1</span>');
+    if (p.taken_at) {
+      $('dlgAgo').textContent = agoShort(p.taken_at);
+      const d = new Date(p.taken_at * 1000), days = (Date.now() / 1000 - p.taken_at) / 86400;
+      $('dlgDate').textContent = days < 7 ? ago(p.taken_at) : months[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== new Date().getFullYear() ? ', ' + d.getFullYear() : '');
+    } else {
+      const d = new Date(Date.now() - p.daysAgo * 864e5);
+      $('dlgAgo').textContent = p.daysAgo < 7 ? p.daysAgo + 'd' : Math.round(p.daysAgo / 7) + 'w';
+      $('dlgDate').textContent = months[d.getMonth()] + ' ' + d.getDate() + (d.getFullYear() !== new Date().getFullYear() ? ', ' + d.getFullYear() : '');
+    }
+    renderComments(p.thread || []);
+    $('dlgLikes').textContent = fmt(p.likes) + ' likes';
+    $('likeBtn').innerHTML = svg('ic-like', 24); $('likeBtn').style.color = '';
+    $('dlgPrev').style.visibility = i > 0 ? '' : 'hidden';
+    $('dlgNext').style.visibility = i < POSTS.length - 1 ? '' : 'hidden';
+    dlg.classList.add('open'); document.body.classList.add('modal-open');
+    history.replaceState(null, '', '#' + (p.href || '').replace(/^\//, ''));
+    if (isReel) {
+      video.poster = p.file; video.src = p.video; video.muted = !soundOn; setSoundIcon();
+      video.play().catch(() => { // browser refused unmuted autoplay (no user gesture yet): fall back to muted, like Instagram
+        soundOn = false; video.muted = true; setSoundIcon(); video.play().catch(() => card.classList.add('paused'));
+      });
+    }
+  }
+  // ---- comment threads: [{user, text, ago, likes, self, avatar, replies:[...]}]
+  const DEF_AVA = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='16' fill='%23dbdbdb'/><circle cx='16' cy='12.5' r='5.5' fill='%23fff'/><path d='M5 28.5c1.5-6.5 6-9.5 11-9.5s9.5 3 11 9.5A16 16 0 0 1 5 28.5z' fill='%23fff'/></svg>";
+  const esc = s => String(s || '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const likesTxt = n => n ? `<b>${fmt(n)} like${n === 1 ? '' : 's'}</b>` : '';
+  function cmHtml(c, small) {
+    const ava = c.self ? P.avatar : (c.avatar || DEF_AVA);
+    const vb = c.self && P.verified ? svg('ic-verified', 12).replace('class="ic"', 'class="ic vb"') : '';
+    const rs = (c.replies || []);
+    const replies = rs.length ? `<div class="replies"><button class="vr" data-n="${rs.length}">View replies (${rs.length})</button><div class="rl" hidden>${rs.map(r => cmHtml(r, true)).join('')}</div></div>` : '';
+    return `<div class="cm${small ? ' small' : ''}"><img class="cava" src="${ava}" alt=""><div class="c"><div class="t"><b>${esc(c.user)}</b>${vb}${esc(c.text)}</div><div class="meta"><span>${esc(c.ago)}</span>${likesTxt(c.likes)}<b>Reply</b></div>${replies}</div><button class="heart" title="Like">${svg('ic-like', 12)}</button></div>`;
+  }
+  function renderComments(list) {
+    const box = $('dlgComments'); box.innerHTML = list.map(c => cmHtml(c, false)).join('');
+    box.querySelectorAll('.vr').forEach(b => b.addEventListener('click', () => { const rl = b.nextElementSibling; rl.hidden = !rl.hidden; b.textContent = rl.hidden ? `View replies (${b.dataset.n})` : 'Hide replies'; }));
+    box.querySelectorAll('.heart').forEach(b => b.addEventListener('click', () => { const on = b.classList.toggle('on'); b.innerHTML = svg(on ? 'ic-like-filled' : 'ic-like', 12); }));
+  }
+  function close() { stopVideo(); dlg.classList.remove('open'); document.body.classList.remove('modal-open'); history.replaceState(null, '', location.pathname); }
+  soundBtn.addEventListener('click', e => { e.stopPropagation(); soundOn = !soundOn; video.muted = !soundOn; setSoundIcon(); if (video.paused) video.play().catch(() => {}); });
+  let lastToggle = 0;
+  $('dlgMedia').addEventListener('click', e => {
+    if (!card.classList.contains('reel') || e.target.closest('.sound')) return;
+    const now = Date.now(); if (now - lastToggle < 250) return; lastToggle = now; // guard against synthetic double clicks
+    if (video.paused) video.play().catch(() => {}); else video.pause();
+  });
+  video.addEventListener('play', () => card.classList.remove('paused'));
+  video.addEventListener('pause', () => { if (dlg.classList.contains('open') && video.src) card.classList.add('paused'); });
+  $('dlgClose').addEventListener('click', close);
+  $('dlgPrev').addEventListener('click', () => cur > 0 && open(cur - 1));
+  $('dlgNext').addEventListener('click', () => cur < POSTS.length - 1 && open(cur + 1));
+  dlg.addEventListener('click', e => { if (e.target === dlg) close(); });
+  document.addEventListener('keydown', e => {
+    if (!dlg.classList.contains('open')) return;
+    if (e.key === 'Escape') close(); if (e.key === 'ArrowLeft' && cur > 0) open(cur - 1); if (e.key === 'ArrowRight' && cur < POSTS.length - 1) open(cur + 1);
+  });
+  $('likeBtn').addEventListener('click', () => {
+    const liked = $('likeBtn').dataset.on === '1'; $('likeBtn').dataset.on = liked ? '0' : '1';
+    $('likeBtn').innerHTML = liked ? svg('ic-like', 24) : svg('ic-like-filled', 24); $('likeBtn').style.color = liked ? '' : '#ff3040';
+  });
+})();
+</script>
+</body>
+</html>

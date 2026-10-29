@@ -1,0 +1,80 @@
+{
+ "uploads": {
+  "car": "37b7ac8d-61ba-4338-a2ce-abfc7e0816b2",
+  "style_2": "3e152668-6829-43b3-ad7a-443085e6c799",
+  "style_3": "6d1a743c-64aa-4153-a4a8-86906cd3019a",
+  "frame_4_mirrored": "4b00a6ea-c75e-48c2-84ca-47f94dfbabda"
+ },
+ "images": {
+  "11": "64d6c1cf-269f-42bf-b34d-5eaab7195620",
+  "12": "c5f0d1a2-dd22-479f-883e-7062a211a339",
+  "13": "d33d743e-2799-4667-bf18-b9afeb5dc8e9",
+  "14": "43c57afb-cc93-431f-a9ab-5a040430c540",
+  "21": "2c1ae5cb-343d-4c50-871d-c021c18dffa1",
+  "22": "121829dc-d5bf-4d42-81dc-1d684ed3a531",
+  "23": "08c4e7b4-c1da-482e-8735-290a6cbe5693",
+  "24": "60a9009e-a71f-40b5-a49f-988336da6109",
+  "31": "19551dd1-e8d5-4750-bed7-cb454e2a934a",
+  "32": "8b607ebd-24c2-49b7-abdf-4b2edce93631",
+  "33": "e2680651-0152-4bd5-87e8-5bf33b3774a7",
+  "34": "29969b4e-0dfb-4192-8b04-d6f76a596c2b",
+  "41": "14ab2402-647a-4b80-881e-b0161c9659ed",
+  "42": "879b0992-7719-4bf6-9892-07aa90adea6d",
+  "43": "de26d677-04c6-4ef9-9d95-14a5faa6be33",
+  "44": "a214bf4a-4e49-4945-8832-ddcdf2a33944"
+ },
+ "selected": {
+  "1": "12",
+  "2": "22",
+  "3": "31",
+  "4": "43"
+ },
+ "selected_note": "frame 4 is candidate 43 mirrored horizontally so the car travels left to right like the other frames; uploaded as its own media; frame 2 switched from 23 to 22 for the video retry (23 points at the lens and rendered as a second oncoming pass)",
+ "selected_job_ids": {
+  "1": "c5f0d1a2-dd22-479f-883e-7062a211a339",
+  "2": "121829dc-d5bf-4d42-81dc-1d684ed3a531",
+  "3": "19551dd1-e8d5-4750-bed7-cb454e2a934a"
+ },
+ "video_params": {
+  "model": "seedance_2_5",
+  "draft": true,
+  "resolution": "480p",
+  "duration": 5,
+  "aspect_ratio": "9:16",
+  "generate_audio": true,
+  "media_role": "image (server maps it to image_references under omni_reference)",
+  "declined_preset_id": "24bae836-2c4a-48e0-89b6-49fcc0b21612"
+ },
+ "video_attempts": {
+  "1": [
+   "eb0780bf-36b2-4e83-be7a-d2940623b547"
+  ],
+  "2": [
+   "f9d452e8-d02c-4509-9e5c-78b1951e574d",
+   "7bf82e77-8aec-430a-b555-15478332337e"
+  ],
+  "3": [
+   "b24b9c05-b6b6-450a-b1d0-e709e88b11ef"
+  ],
+  "4": [
+   "c1a7efeb-fb2f-4952-a6e8-722d299ee2b5"
+  ]
+ },
+ "videos": {
+  "1": "eb0780bf-36b2-4e83-be7a-d2940623b547",
+  "2": "7bf82e77-8aec-430a-b555-15478332337e",
+  "3": "b24b9c05-b6b6-450a-b1d0-e709e88b11ef",
+  "4": "c1a7efeb-fb2f-4952-a6e8-722d299ee2b5"
+ },
+ "music": {
+  "01-company-money-drift-skunk": "Company Money - Drift Skunk",
+  "02-1beatproductions-outlaw": "1beatProductions - Outlaw",
+  "03-skrillex-noisia-josh-pan-dylan-brady-sup": "Skrillex, Noisia, josh pan, Dylan Brady - Supersonic (my existence)"
+ },
+ "stitch_args": "--clip-max 3=2.8",
+ "credits": {
+  "images": 24,
+  "clips": 75,
+  "total": 99
+ }
+}

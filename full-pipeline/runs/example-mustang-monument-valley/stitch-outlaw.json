@@ -1,0 +1,54 @@
+{
+ "name": "1beatproductions-outlaw",
+ "track": "music/02-1beatproductions-outlaw.m4a",
+ "bpm": 133.1,
+ "beat": 0.4508,
+ "drop": {
+  "time": 16.645,
+  "jump": 1925.0299125864688,
+  "before": 1386.337188972637,
+  "after": 3311.367101559106,
+  "runners_up": [
+   {
+    "time": 14.765,
+    "jump": 1453.9696429359838
+   },
+   {
+    "time": 18.535,
+    "jump": 1340.690223433318
+   },
+   {
+    "time": 12.835,
+    "jump": 932.448196838134
+   }
+  ]
+ },
+ "drop_at_cut": 1,
+ "media_start": 11.686,
+ "clip_durations": [
+  5.041667,
+  5.041667,
+  5.041667,
+  5.041667
+ ],
+ "clip_max": {
+  "3": 2.8
+ },
+ "clip_in": {},
+ "timeline_durations": [
+  4.959,
+  4.959,
+  2.705,
+  5.042
+ ],
+ "timeline_starts": [
+  0,
+  4.959,
+  9.918,
+  12.623
+ ],
+ "total": 17.665,
+ "clip_vol": 0.5,
+ "music_vol": 0.9,
+ "output": "/Users/olegmelnikov/Desktop/ViralCars/reels/mustang-monument-valley/mustang-monument-valley-1beatproductions-outlaw.mp4"
+}

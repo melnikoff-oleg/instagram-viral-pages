@@ -1,0 +1,20 @@
+.DS_Store
+__pycache__/
+*.pyc
+.env
+# studio: session id, chat history, step marks
+.studio/
+# results of the finders are yours, not the starter's
+music-finder/results/cache/
+pinterest-refs/results/*/screen/
+# full pipeline: generated media stays local, picks and job ids are committed
+full-pipeline/runs/*/candidates/
+full-pipeline/runs/*/clips/
+full-pipeline/runs/*/hyperframes/
+full-pipeline/runs/*/selected/*.png
+full-pipeline/runs/*/music/*.m4a
+full-pipeline/runs/*/music/*.mp3
+# video never goes into git
+*.mp4
+*.MP4
+*.mov

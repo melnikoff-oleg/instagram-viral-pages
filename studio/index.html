@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Viral Page Studio</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%236a66c9'/%3E%3Cstop offset='1' stop-color='%23f0a06a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Ccircle cx='16' cy='21' r='5' fill='%23ff8a3d'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="/studio/style.css">
+</head>
+<body>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="top">
+  <div class="brand">
+    <span class="brand-dot" aria-hidden="true"></span>
+    <strong>Viral Page Studio</strong>
+    <span class="project" id="projectName" title="the project folder this studio is looking at"></span>
+  </div>
+  <div class="status">
+    <span class="pill" id="mcpPill" title="MCP servers Claude Code sees">Higgsfield MCP</span>
+    <button class="pill" id="balancePill" title="Higgsfield credits. Click to refresh.">balance…</button>
+    <button class="pill" id="keysBtn" title="API keys the scripts need">Keys</button>
+    <a class="pill primary" id="openPreview" href="#" target="_blank" rel="noopener">Open profile preview ↗</a>
+  </div>
+</header>
+
+<main class="layout">
+  <aside class="rail" id="rail" aria-label="Steps"></aside>
+
+  <section class="chat" aria-label="Chat with Claude Code">
+    <div class="transcript" id="transcript"></div>
+    <div class="working" id="working" hidden>
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="working-text">
+        <div class="working-line"><span id="workingTitle">Working</span> <span class="elapsed" id="elapsed">0:00</span></div>
+        <div class="working-sub" id="workingSub"></div>
+        <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+      </div>
+      <button class="stop" id="stop">Stop</button>
+    </div>
+    <div class="composer">
+      <div class="chips" id="chips"></div>
+      <div class="inputrow">
+        <textarea id="input" rows="1" placeholder="Tell Claude what to do, or press a button above"></textarea>
+        <button class="send" id="send" title="Send (Enter)">Send</button>
+      </div>
+      <div class="hint" id="hint"></div>
+    </div>
+  </section>
+
+  <section class="artifacts" id="artifacts" aria-label="Your page">
+    <article class="card" id="cardConcept"></article>
+    <article class="card" id="cardRefs"></article>
+    <article class="card" id="cardPack"></article>
+    <article class="card" id="cardReels"></article>
+  </section>
+</main>
+
+<div class="modal" id="modal" hidden>
+  <div class="modal-box">
+    <button class="close" id="modalClose" aria-label="Close">×</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/studio/app.js"></script>
+</body>
+</html>

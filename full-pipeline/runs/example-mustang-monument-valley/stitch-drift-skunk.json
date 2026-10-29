@@ -1,0 +1,54 @@
+{
+ "name": "company-money-drift-skunk",
+ "track": "music/01-company-money-drift-skunk.m4a",
+ "bpm": 110,
+ "beat": 0.5455,
+ "drop": {
+  "time": 17.025,
+  "jump": 1491.8266391298505,
+  "before": 1075.346773755897,
+  "after": 2567.1734128857474,
+  "runners_up": [
+   {
+    "time": 14.855,
+    "jump": 1372.7186936164705
+   },
+   {
+    "time": 12.665,
+    "jump": 1202.382560895501
+   },
+   {
+    "time": 121.755,
+    "jump": 1128.5831539587655
+   }
+  ]
+ },
+ "drop_at_cut": 1,
+ "media_start": 12.116,
+ "clip_durations": [
+  5.041667,
+  5.041667,
+  5.041667,
+  5.041667
+ ],
+ "clip_max": {
+  "3": 2.8
+ },
+ "clip_in": {},
+ "timeline_durations": [
+  4.909,
+  4.909,
+  2.727,
+  5.042
+ ],
+ "timeline_starts": [
+  0,
+  4.909,
+  9.818,
+  12.545
+ ],
+ "total": 17.587,
+ "clip_vol": 0.5,
+ "music_vol": 0.9,
+ "output": "/Users/olegmelnikov/Desktop/ViralCars/reels/mustang-monument-valley/mustang-monument-valley-company-money-drift-skunk.mp4"
+}
