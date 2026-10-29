@@ -13,7 +13,7 @@ This folder is the starter. The account it was built for is in its own repositor
 
 1. **Claude Code, version 2.1 or newer**: `curl -fsSL https://claude.ai/install.sh | bash` on macOS and Linux, `irm https://claude.ai/install.ps1 | iex` in PowerShell on Windows. Run `claude` once in a terminal and sign in. It needs a Claude subscription (Pro or better; the free plan does not include Claude Code). This is the thing that does the work, so `claude --version` has to print a number before anything else will.
 2. **Python 3** (already on macOS and Linux; python.org on Windows), with `pip3 install pillow`.
-3. **The Higgsfield MCP**, which is where the images and the video come from. In a terminal: `claude mcp add --transport http higgsfield https://mcp.higgsfield.ai/mcp`, then inside Claude Code type `/mcp` and sign in. A Higgsfield plan with credits; a full reel is about 85 credits.
+3. **The Higgsfield MCP**, which is where the images and the video come from. In a terminal: `claude mcp add --scope user --transport http higgsfield https://mcp.higgsfield.ai/mcp`, then inside Claude Code type `/mcp` and sign in. `--scope user` matters: without it the server is tied to the folder the line was run in, and Claude Code started in this folder would not see it. A Higgsfield plan with credits; a full reel is about 85 credits.
 4. **The Higgsfield CLI**, only so the studio can show your balance: `npm install -g @higgsfield/cli` (or the installer on higgsfield.ai), then `higgsfield auth login`. Everything else works without it.
 5. **An Apify key** (console.apify.com, free tier is enough): username checks, Pinterest references and music research run through Apify actors, for cents per run. Paste it into the Keys box in the studio.
 6. **ffmpeg, node 22 and yt-dlp** for the reels: `brew install ffmpeg node yt-dlp` on a Mac. Claude Code will install what is missing if you ask it.
@@ -23,17 +23,30 @@ Not needed: an Anthropic API key. Nothing here calls the Claude API; Claude Code
 ## Get it
 
     git clone https://github.com/melnikoff-oleg/instagram-viral-pages.git
-    cd instagram-viral-pages
 
-No git? Open the GitHub page, press the green **Code** button, choose **Download ZIP**, unzip it, and open that folder in VS Code.
+No git? Open the GitHub page, press the green **Code** button, choose **Download ZIP**, unzip it, and put the folder somewhere you will find it again (Documents is fine; the name does not matter).
+
+Everything happens inside this folder. Claude Code works on the folder it is started in and nothing else: it reads the instructions here, writes your concept and reels here, and the studio serves from here. So the order is always the same three moves:
+
+1. **Open the folder in VS Code**: File → Open Folder (Open on a Mac), pick it, trust the authors.
+2. **Open a terminal inside it**: Terminal → New Terminal. The prompt ends with the folder name.
+3. **Start Claude Code in that terminal**: type `claude` and press Enter. The welcome box shows the folder's path.
+
+The same three moves bring you back tomorrow.
 
 ## Run
 
+The first time, with Claude Code started in the folder, paste:
+
+> Set up Viral Page Studio for me. You are inside its folder. Read its README, install anything I am missing (Python 3 with pillow, ffmpeg, Node 22, yt-dlp, the Higgsfield CLI), check that the Higgsfield MCP is connected, start the studio, and tell me which link to open.
+
+It installs what is missing, starts the studio and hands you http://localhost:8788. Say yes when it asks permission.
+
+Every time after that, the same three moves and **"start the studio"** in Claude Code; it knows what that means. Or, without Claude Code, in the terminal inside the folder:
+
     python3 studio/serve.py
 
-Then open http://localhost:8788. On a Mac, double-click `start.command` instead; it checks what is installed, starts the studio and opens the browser. The terminal it leaves behind is the engine; closing it stops the studio.
-
-Or just open the folder in VS Code, start Claude Code in it, and say: **"start the studio"**. It knows what that means.
+Then open http://localhost:8788. On a Mac, double-click `start.command` instead; it checks what is installed, starts the studio and opens the browser. Whichever way it was started, the terminal it leaves behind is the engine; closing it stops the studio.
 
 ## How it goes
 
@@ -63,7 +76,7 @@ Or just open the folder in VS Code, start Claude Code in it, and say: **"start t
 
 - **"Claude Code is not installed"** in the chat: run `claude` in a terminal; until that works, the studio cannot.
 - **The balance pill says unknown**: the Higgsfield CLI is missing or not signed in (`higgsfield auth login`). Generation still works through the MCP.
-- **"Higgsfield MCP missing"** at the top: Claude Code does not see the server. Run the `claude mcp add` line above and sign in with `/mcp`.
+- **"Higgsfield MCP missing"** at the top: Claude Code does not see the server. Run the `claude mcp add` line above (with `--scope user`) and sign in with `/mcp`.
 - **A step says a key is missing**: the Keys button at the top right.
 - **Port 8788 is busy**: `python3 studio/serve.py --port 8790`.
 - Anything else: say it in the chat. Claude Code wrote the setup and can read its own errors.
