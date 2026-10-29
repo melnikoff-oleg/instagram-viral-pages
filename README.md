@@ -22,7 +22,7 @@ This folder is the starter. The account it was built for is in its own repositor
 
     git clone https://github.com/melnikoff-oleg/instagram-viral-pages.git
 
-No git? Open the GitHub page, press the green **Code** button, choose **Download ZIP**, unzip it, and put the folder somewhere you will find it again (Documents is fine; the name does not matter).
+No git? Open the GitHub page, press the green **Code** button, choose **Download ZIP**, unzip it, and keep the folder wherever you like (the name does not matter either).
 
 Everything happens inside this folder. Claude Code works on the folder it is started in and nothing else: it reads the instructions here, writes your concept and reels here, and the studio serves from here. So the order is always the same three moves:
 
